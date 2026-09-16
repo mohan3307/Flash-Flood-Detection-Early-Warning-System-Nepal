@@ -154,7 +154,18 @@ export function App() {
   const currentViewInfo = viewTitles[activeView] || viewTitles.overview;
 
   return (
-    <div className="min-h-screen bg-[#0b1326] text-[#dae2fd] flex flex-col selection:bg-[#06b6d4] selection:text-[#003640]">
+    <div className="min-h-screen bg-[#080f20] text-[#dae2fd] flex flex-col selection:bg-[#06b6d4] selection:text-[#003640] relative">
+      {/* Mild Flood Warning Tactical Background Wallpaper */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat opacity-[0.15] filter brightness-90 contrast-125"
+        style={{
+          backgroundImage: "url('/assets/images/flood_warning_bg.jpg')",
+          backgroundAttachment: 'fixed',
+        }}
+      />
+      {/* Dark Tactical Vignette Overlay for Crisp Readability */}
+      <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#080f20]/65 via-[#0b1326]/80 to-[#080f20]/95" />
+
       {/* Top Header */}
       <Header
         activeAlertsCount={frame.alerts_count}
@@ -166,7 +177,7 @@ export function App() {
       />
 
       {/* Main Workspace Layout with Vertical Sidebar */}
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 flex overflow-hidden relative z-10">
         {/* Desktop Vertical Sidebar */}
         <div className="hidden md:flex shrink-0">
           <Sidebar
