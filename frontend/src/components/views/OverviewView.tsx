@@ -30,45 +30,47 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
   onOpenPerformance,
 }) => {
   return (
-    <div className="space-y-5 animate-fadeIn">
+    <div className="space-y-6 animate-fadeIn">
       {/* Real-time Catchment Visual Hero Strip */}
-      <div className="relative rounded-2xl overflow-hidden border border-[#222a3d] bg-[#131b2e] shadow-xl">
-        <div className="relative h-44 sm:h-52 w-full overflow-hidden">
+      <div className="relative rounded-3xl overflow-hidden glass-panel border border-cyan-500/30 bg-[#030712]/90 shadow-2xl">
+        <div className="relative h-48 sm:h-56 w-full overflow-hidden">
           <img
             src="/assets/images/melamchi_valley.jpg"
             alt="Melamchi Catchment Surveillance Nepal"
-            className="w-full h-full object-cover object-center filter brightness-[0.75] contrast-110"
+            className="w-full h-full object-cover object-center filter brightness-[0.65] contrast-125 transition-all duration-700 hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#070e1c] via-[#070e1c]/80 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#070e1c] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#030712] via-[#030712]/85 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-transparent to-[#030712]/40" />
 
           {/* Hero Overlay Content */}
-          <div className="absolute inset-0 p-5 sm:p-6 flex flex-col justify-between">
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="flex items-center gap-2">
-                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#06b6d4]/20 border border-[#06b6d4]/50 backdrop-blur-md text-[#4cd7f6] text-[11px] font-mono font-bold">
-                  <Radio className="w-3.5 h-3.5 animate-pulse" />
-                  <span>HIMALAYAN RIVER CATCHMENT RADAR</span>
+          <div className="absolute inset-0 p-6 sm:p-7 flex flex-col justify-between">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-2.5">
+                <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-950/80 border border-cyan-400/50 backdrop-blur-md text-cyan-300 text-xs font-mono font-bold shadow-lg shadow-cyan-950/50">
+                  <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
+                  <span>HIMALAYAN CATCHMENT RADAR</span>
                 </span>
-                <span className="hidden sm:inline-block px-2.5 py-1 rounded bg-[#0b1326]/80 border border-[#222a3d] text-[#869397] text-[11px] font-mono">
+                <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/70 text-slate-300 text-xs font-mono">
+                  <MapPin className="w-3.5 h-3.5 text-cyan-400" />
                   Sindhupalchok, Nepal
                 </span>
               </div>
 
               <div className="flex items-center gap-2 font-mono text-xs">
-                <span className="px-2.5 py-1 rounded bg-[#10b981]/20 border border-[#10b981]/40 text-[#10b981] font-bold">
-                  4 STATIONS ACTIVE
+                <span className="px-3 py-1.5 rounded-full bg-emerald-950/70 border border-emerald-500/50 text-emerald-400 font-extrabold shadow-md shadow-emerald-950/50 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 radar-dot" />
+                  4 STATIONS ONLINE
                 </span>
               </div>
             </div>
 
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white font-['Space_Grotesk'] tracking-tight">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white font-['Outfit'] tracking-tight">
                   Melamchi-Indrawati River Surveillance Corridor
                 </h2>
               </div>
-              <p className="text-xs sm:text-sm text-[#dae2fd]/80 max-w-2xl mt-1 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-300 max-w-3xl mt-1.5 leading-relaxed font-sans">
                 Autonomous multi-station early warning matrix operating along 26km of steep hydraulic gradient (2,480m to 785m MSL) with AI flash flood prediction & false alarm suppression.
               </p>
             </div>

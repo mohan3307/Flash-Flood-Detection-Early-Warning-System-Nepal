@@ -12,40 +12,40 @@ export const LiveSensorCards: React.FC<LiveSensorCardsProps> = ({ primaryZone })
   const isRiseHigh = primaryZone.rate_of_rise > 0.25;
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 items-stretch">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-stretch">
       {/* Rainfall Card */}
       <div
-        className={`p-4 rounded-xl border flex flex-col justify-between transition-all ${
+        className={`p-4 sm:p-5 rounded-2xl glass-panel glass-panel-hover flex flex-col justify-between transition-all duration-300 ${
           isRainHigh
-            ? 'bg-[#0f172a] border-[#06b6d4] shadow-lg shadow-cyan-950/40 ring-1 ring-[#4cd7f6]/40'
-            : 'bg-[#131b2e]/80 border-[#222a3d]'
+            ? 'glass-card-cyan border-cyan-400/60 ring-1 ring-cyan-400/50'
+            : 'bg-[#030712]/80 border-slate-800'
         }`}
       >
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-mono font-semibold text-[#869397] uppercase tracking-wider">
+            <span className="text-[11px] font-mono font-extrabold text-slate-400 uppercase tracking-wider">
               Precipitation
             </span>
-            <div className="p-1.5 rounded bg-[#06b6d4]/10 text-[#4cd7f6]">
+            <div className="p-2 rounded-xl bg-cyan-950/60 text-cyan-400 border border-cyan-500/30">
               <CloudRain className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl sm:text-3xl font-bold font-mono text-white">
+            <span className="text-3xl sm:text-4xl font-black font-mono text-white">
               {primaryZone.rainfall_intensity.toFixed(1)}
             </span>
-            <span className="text-xs text-[#869397] font-mono">mm/hr</span>
+            <span className="text-xs text-slate-400 font-mono font-bold">mm/hr</span>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between text-[11px] font-mono pt-2 border-t border-[#222a3d]">
-          <span className="text-[#869397]">Optical Sensor</span>
+        <div className="mt-4 flex items-center justify-between text-[11px] font-mono pt-2.5 border-t border-slate-800">
+          <span className="text-slate-400 font-medium">Optical Sensor</span>
           <span
-            className={`px-1.5 py-0.5 rounded font-semibold text-[10px] ${
+            className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
               primaryZone.rainfall_intensity > 80
-                ? 'bg-[#93000a] text-[#ffb4ab]'
+                ? 'bg-red-950 text-red-300 border border-red-500'
                 : primaryZone.rainfall_intensity > 35
-                ? 'bg-[#e79400]/30 text-[#ffb95f]'
-                : 'bg-[#171f33] text-[#dae2fd]'
+                ? 'bg-amber-950 text-amber-300 border border-amber-500'
+                : 'bg-slate-800 text-slate-200 border border-slate-700'
             }`}
           >
             {primaryZone.rainfall_intensity > 80 ? 'CLOUDBURST' : primaryZone.rainfall_intensity > 35 ? 'HEAVY' : 'NORMAL'}
@@ -55,37 +55,37 @@ export const LiveSensorCards: React.FC<LiveSensorCardsProps> = ({ primaryZone })
 
       {/* Water Level Card */}
       <div
-        className={`p-4 rounded-xl border flex flex-col justify-between transition-all ${
+        className={`p-4 sm:p-5 rounded-2xl glass-panel glass-panel-hover flex flex-col justify-between transition-all duration-300 ${
           isWaterHigh
-            ? 'bg-[#0f172a] border-[#ef4444] shadow-lg shadow-red-950/40 ring-1 ring-[#ef4444]/40'
-            : 'bg-[#131b2e]/80 border-[#222a3d]'
+            ? 'glass-card-danger border-red-500/60 ring-1 ring-red-500/50'
+            : 'bg-[#030712]/80 border-slate-800'
         }`}
       >
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-mono font-semibold text-[#869397] uppercase tracking-wider">
+            <span className="text-[11px] font-mono font-extrabold text-slate-400 uppercase tracking-wider">
               River Stage
             </span>
-            <div className="p-1.5 rounded bg-[#4cd7f6]/10 text-[#4cd7f6]">
+            <div className="p-2 rounded-xl bg-cyan-950/60 text-cyan-400 border border-cyan-500/30">
               <Waves className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl sm:text-3xl font-bold font-mono text-white">
+            <span className="text-3xl sm:text-4xl font-black font-mono text-white">
               {primaryZone.water_level.toFixed(2)}
             </span>
-            <span className="text-xs text-[#869397] font-mono">meters</span>
+            <span className="text-xs text-slate-400 font-mono font-bold">meters</span>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between text-[11px] font-mono pt-2 border-t border-[#222a3d]">
-          <span className="text-[#869397]">Radar Hydro-gauge</span>
+        <div className="mt-4 flex items-center justify-between text-[11px] font-mono pt-2.5 border-t border-slate-800">
+          <span className="text-slate-400 font-medium">Radar Hydro-gauge</span>
           <span
-            className={`px-1.5 py-0.5 rounded font-semibold text-[10px] ${
+            className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
               primaryZone.water_level > 3.4
-                ? 'bg-[#93000a] text-[#ffb4ab]'
+                ? 'bg-red-950 text-red-300 border border-red-500'
                 : primaryZone.water_level > 2.0
-                ? 'bg-[#e79400]/30 text-[#ffb95f]'
-                : 'bg-[#171f33] text-[#dae2fd]'
+                ? 'bg-amber-950 text-amber-300 border border-amber-500'
+                : 'bg-slate-800 text-slate-200 border border-slate-700'
             }`}
           >
             {primaryZone.water_level > 3.4 ? 'BANKFULL' : primaryZone.water_level > 2.0 ? 'ELEVATED' : 'SAFE'}
@@ -95,37 +95,37 @@ export const LiveSensorCards: React.FC<LiveSensorCardsProps> = ({ primaryZone })
 
       {/* Rate of Rise Card */}
       <div
-        className={`p-4 rounded-xl border flex flex-col justify-between transition-all ${
+        className={`p-4 sm:p-5 rounded-2xl glass-panel glass-panel-hover flex flex-col justify-between transition-all duration-300 ${
           isRiseHigh
-            ? 'bg-[#0f172a] border-[#ef4444] shadow-lg shadow-red-950/40 ring-1 ring-[#ef4444]/40'
-            : 'bg-[#131b2e]/80 border-[#222a3d]'
+            ? 'glass-card-danger border-red-500/60 ring-1 ring-red-500/50'
+            : 'bg-[#030712]/80 border-slate-800'
         }`}
       >
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-mono font-semibold text-[#869397] uppercase tracking-wider">
+            <span className="text-[11px] font-mono font-extrabold text-slate-400 uppercase tracking-wider">
               Surge Velocity
             </span>
-            <div className="p-1.5 rounded bg-[#ef4444]/10 text-[#ef4444]">
+            <div className="p-2 rounded-xl bg-red-950/60 text-red-400 border border-red-500/30">
               <Gauge className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl sm:text-3xl font-bold font-mono text-white">
+            <span className="text-3xl sm:text-4xl font-black font-mono text-white">
               {primaryZone.rate_of_rise > 0 ? `+${primaryZone.rate_of_rise.toFixed(2)}` : primaryZone.rate_of_rise.toFixed(2)}
             </span>
-            <span className="text-xs text-[#869397] font-mono">m/hr</span>
+            <span className="text-xs text-slate-400 font-mono font-bold">m/hr</span>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between text-[11px] font-mono pt-2 border-t border-[#222a3d]">
-          <span className="text-[#869397]">Rise Momentum</span>
+        <div className="mt-4 flex items-center justify-between text-[11px] font-mono pt-2.5 border-t border-slate-800">
+          <span className="text-slate-400 font-medium">Rise Momentum</span>
           <span
-            className={`px-1.5 py-0.5 rounded font-semibold text-[10px] ${
+            className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
               primaryZone.rate_of_rise > 0.3
-                ? 'bg-[#93000a] text-[#ffb4ab] animate-pulse'
+                ? 'bg-red-950 text-red-300 border border-red-500 animate-pulse'
                 : primaryZone.rate_of_rise > 0.1
-                ? 'bg-[#e79400]/30 text-[#ffb95f]'
-                : 'bg-[#171f33] text-[#dae2fd]'
+                ? 'bg-amber-950 text-amber-300 border border-amber-500'
+                : 'bg-slate-800 text-slate-200 border border-slate-700'
             }`}
           >
             {primaryZone.rate_of_rise > 0.3 ? 'CRITICAL SURGE' : primaryZone.rate_of_rise > 0.1 ? 'RISING' : 'STABLE'}
@@ -134,63 +134,63 @@ export const LiveSensorCards: React.FC<LiveSensorCardsProps> = ({ primaryZone })
       </div>
 
       {/* Temperature Card */}
-      <div className="p-4 rounded-xl bg-[#131b2e]/80 border border-[#222a3d] flex flex-col justify-between">
+      <div className="p-4 sm:p-5 rounded-2xl glass-panel glass-panel-hover bg-[#030712]/80 border border-slate-800 flex flex-col justify-between">
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-mono font-semibold text-[#869397] uppercase tracking-wider">
+            <span className="text-[11px] font-mono font-extrabold text-slate-400 uppercase tracking-wider">
               Atmosphere
             </span>
-            <div className="p-1.5 rounded bg-[#ffb95f]/10 text-[#ffb95f]">
+            <div className="p-2 rounded-xl bg-amber-950/60 text-amber-400 border border-amber-500/30">
               <Thermometer className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl sm:text-3xl font-bold font-mono text-white">
+            <span className="text-3xl sm:text-4xl font-black font-mono text-white">
               {primaryZone.temperature.toFixed(1)}
             </span>
-            <span className="text-xs text-[#869397] font-mono">°C</span>
+            <span className="text-xs text-slate-400 font-mono font-bold">°C</span>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between text-[11px] font-mono pt-2 border-t border-[#222a3d]">
-          <span className="text-[#869397]">Himalayan Basin</span>
-          <span className="px-1.5 py-0.5 rounded bg-[#171f33] text-[#dae2fd] font-semibold text-[10px]">
+        <div className="mt-4 flex items-center justify-between text-[11px] font-mono pt-2.5 border-t border-slate-800">
+          <span className="text-slate-400 font-medium">Himalayan Basin</span>
+          <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-200 font-bold text-[10px] border border-slate-700">
             SYNOPTIC
           </span>
         </div>
       </div>
 
       {/* Sensor Status Card */}
-      <div className="col-span-2 sm:col-span-2 lg:col-span-1 p-4 rounded-xl bg-[#131b2e]/80 border border-[#222a3d] flex flex-col justify-between">
+      <div className="col-span-2 sm:col-span-2 lg:col-span-1 p-4 sm:p-5 rounded-2xl glass-panel glass-panel-hover bg-[#030712]/80 border border-slate-800 flex flex-col justify-between">
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-mono font-semibold text-[#869397] uppercase tracking-wider">
+            <span className="text-[11px] font-mono font-extrabold text-slate-400 uppercase tracking-wider">
               Telemetry Node
             </span>
-            <div className="p-1.5 rounded bg-[#10b981]/10 text-[#10b981]">
+            <div className="p-2 rounded-xl bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
               <Radio className="w-4 h-4" />
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <span
-              className={`w-2 h-2 rounded-full ${
+              className={`w-3 h-3 rounded-full ${
                 primaryZone.status === 'ONLINE'
-                  ? 'bg-[#10b981] radar-dot text-[#10b981]'
+                  ? 'bg-emerald-400 radar-dot text-emerald-400'
                   : primaryZone.status === 'DEGRADED'
-                  ? 'bg-[#ffb95f]'
-                  : 'bg-[#ef4444]'
+                  ? 'bg-amber-400'
+                  : 'bg-red-500'
               }`}
             />
-            <span className="text-xl font-bold font-mono text-white tracking-wide">
+            <span className="text-xl font-extrabold font-mono text-white tracking-wide">
               {primaryZone.status}
             </span>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between text-[11px] font-mono text-[#869397] pt-2 border-t border-[#222a3d]">
-          <span className="flex items-center gap-1">
-            <BatteryCharging className="w-3.5 h-3.5 text-[#10b981]" />
+        <div className="mt-4 flex items-center justify-between text-[11px] font-mono text-slate-400 pt-2.5 border-t border-slate-800 font-bold">
+          <span className="flex items-center gap-1.5">
+            <BatteryCharging className="w-3.5 h-3.5 text-emerald-400" />
             {primaryZone.battery_level}% Batt
           </span>
-          <span className="flex items-center gap-1 text-[#4cd7f6]">
+          <span className="flex items-center gap-1 text-cyan-400">
             <Wifi className="w-3.5 h-3.5" />
             LoRaWAN
           </span>

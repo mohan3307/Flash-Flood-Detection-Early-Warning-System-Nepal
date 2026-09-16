@@ -21,26 +21,26 @@ export const RiskSummaryCard: React.FC<RiskSummaryCardProps> = ({
 
   const riskColorConfig = {
     HIGH: {
-      bg: 'from-[#93000a]/40 via-[#171f33] to-[#0b1326]',
-      border: 'border-[#ef4444]/80 shadow-[#93000a]/30',
-      badge: 'bg-[#93000a]/40 text-[#ffb4ab] border-[#ef4444]/60',
-      text: 'text-[#ffb4ab]',
+      bg: 'glass-card-danger',
+      border: 'border-red-500/70 shadow-red-950/50',
+      badge: 'bg-red-950/80 text-red-200 border-red-500/80 shadow-md shadow-red-950/50',
+      text: 'text-red-400',
       statusText: 'CRITICAL WARNING: MANDATORY EVACUATION',
       desc: 'Severe upstream cloudburst surge detected. River stage exceeding bankfull capacity.'
     },
     MEDIUM: {
-      bg: 'from-[#e79400]/25 via-[#171f33] to-[#0b1326]',
-      border: 'border-[#ffb95f]/70 shadow-[#e79400]/20',
-      badge: 'bg-[#e79400]/25 text-[#ffddb8] border-[#ffb95f]/60',
-      text: 'text-[#ffb95f]',
+      bg: 'glass-card-amber',
+      border: 'border-amber-500/70 shadow-amber-950/50',
+      badge: 'bg-amber-950/80 text-amber-200 border-amber-500/80 shadow-md shadow-amber-950/50',
+      text: 'text-amber-400',
       statusText: 'SURGE ADVISORY: STANDBY PROTOCOL',
       desc: 'Steady water-level rise with sustained monsoon rainfall. Telemetry watch frequency doubled.'
     },
     LOW: {
-      bg: 'from-[#10b981]/15 via-[#171f33] to-[#0b1326]',
-      border: 'border-[#10b981]/50 shadow-[#10b981]/10',
-      badge: 'bg-[#10b981]/15 text-[#6ee7b7] border-[#10b981]/40',
-      text: 'text-[#10b981]',
+      bg: 'glass-card-emerald',
+      border: 'border-emerald-500/70 shadow-emerald-950/50',
+      badge: 'bg-emerald-950/80 text-emerald-200 border-emerald-500/80 shadow-md shadow-emerald-950/50',
+      text: 'text-emerald-400',
       statusText: 'NOMINAL FLOW: BASELINE CONDITIONS',
       desc: 'Hydrological and meteorological parameters within seasonal safety limits.'
     }
@@ -52,69 +52,70 @@ export const RiskSummaryCard: React.FC<RiskSummaryCardProps> = ({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-xl p-5 bg-gradient-to-br ${riskColorConfig.bg} border ${riskColorConfig.border} shadow-2xl transition-all duration-500 reticle-box`}
+      className={`relative overflow-hidden rounded-2xl p-6 ${riskColorConfig.bg} border ${riskColorConfig.border} shadow-2xl transition-all duration-500 h-full flex flex-col justify-between`}
     >
       {/* Background ambient HUD glow */}
       {isHigh && (
-        <div className="absolute -right-16 -top-16 w-56 h-56 bg-[#ef4444]/15 rounded-full blur-3xl pointer-events-none animate-pulse" />
+        <div className="absolute -right-16 -top-16 w-64 h-64 bg-red-600/20 rounded-full blur-3xl pointer-events-none animate-pulse" />
       )}
 
-      <div className="relative z-10 flex flex-col justify-between h-full">
+      <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
         {/* Card Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] uppercase font-mono font-bold tracking-widest text-[#4cd7f6]">
+          <div className="flex items-center gap-2.5">
+            <span className="text-[11px] uppercase font-mono font-extrabold tracking-widest text-cyan-400 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
               // SECTOR THREAT EVALUATION
             </span>
-            <span className="text-[10px] bg-[#171f33] text-[#dae2fd] px-2 py-0.5 rounded border border-[#3d494c] font-mono">
+            <span className="text-[10px] bg-slate-900/90 text-slate-200 px-2.5 py-0.5 rounded-full border border-slate-700 font-mono font-bold">
               {primaryZone.zone_code} ({primaryZone.subtext})
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono font-semibold border border-[#222a3d] bg-[#0b1326]/80">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold border border-slate-700/80 bg-slate-900/80 shadow-inner">
             {isSurging ? (
               <>
-                <TrendingUp className="w-3.5 h-3.5 text-[#ef4444]" />
-                <span className="text-[#ef4444]">SURGE VELOCITY ACTIVE</span>
+                <TrendingUp className="w-3.5 h-3.5 text-red-400 animate-bounce" />
+                <span className="text-red-400 font-extrabold">SURGE VELOCITY ACTIVE</span>
               </>
             ) : isReceding ? (
               <>
-                <TrendingDown className="w-3.5 h-3.5 text-[#10b981]" />
-                <span className="text-[#10b981]">RECEDING STAGE</span>
+                <TrendingDown className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-emerald-400">RECEDING STAGE</span>
               </>
             ) : (
               <>
-                <Minus className="w-3.5 h-3.5 text-[#869397]" />
-                <span className="text-[#869397]">STEADY BASEFLOW</span>
+                <Minus className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-slate-400">STEADY BASEFLOW</span>
               </>
             )}
           </div>
         </div>
 
         {/* Central Risk Banner */}
-        <div className="my-4 flex flex-col sm:flex-row items-baseline sm:items-center justify-between gap-4">
+        <div className="my-2 flex flex-col sm:flex-row items-baseline sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-3.5">
-              <span className={`text-4xl sm:text-5xl font-extrabold tracking-tight font-['Space_Grotesk'] ${riskColorConfig.text}`}>
+            <div className="flex items-center gap-4">
+              <span className={`text-4xl sm:text-5xl font-black tracking-tight font-['Outfit'] ${riskColorConfig.text}`}>
                 {overallRisk}
               </span>
               <div className="flex flex-col">
-                <span className="text-2xl sm:text-3xl font-bold font-mono text-white">
+                <span className="text-2xl sm:text-3xl font-extrabold font-mono text-white">
                   {primaryZone.probability.toFixed(1)}%
                 </span>
-                <span className="text-[10px] uppercase font-mono tracking-wider text-[#869397]">
+                <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400">
                   Ensemble ML Confidence
                 </span>
               </div>
             </div>
 
-            <div className="mt-2.5 flex items-center gap-2">
+            <div className="mt-3 flex items-center gap-2">
               <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded text-xs font-mono font-bold tracking-wide border ${riskColorConfig.badge}`}
+                className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold tracking-wide border ${riskColorConfig.badge}`}
               >
-                {isHigh && <AlertTriangle className="w-3.5 h-3.5 animate-bounce" />}
-                {isMedium && <AlertCircle className="w-3.5 h-3.5" />}
-                {isLow && <ShieldCheck className="w-3.5 h-3.5" />}
+                {isHigh && <AlertTriangle className="w-4 h-4 animate-bounce" />}
+                {isMedium && <AlertCircle className="w-4 h-4" />}
+                {isLow && <ShieldCheck className="w-4 h-4" />}
                 {riskColorConfig.statusText}
               </span>
             </div>
@@ -122,15 +123,15 @@ export const RiskSummaryCard: React.FC<RiskSummaryCardProps> = ({
 
           {/* Warning Lead Time Counter Pod */}
           {(isHigh || isMedium) && (
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0b1326]/90 border border-[#06b6d4]/40 self-stretch sm:self-auto shadow-inner">
-              <div className="p-2 rounded bg-[#06b6d4]/15 text-[#4cd7f6] border border-[#06b6d4]/40">
-                <Clock className="w-5 h-5 animate-spin" style={{ animationDuration: '8s' }} />
+            <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-900/90 border border-cyan-500/40 self-stretch sm:self-auto shadow-xl">
+              <div className="p-2.5 rounded-xl bg-cyan-950/80 text-cyan-400 border border-cyan-500/40">
+                <Clock className="w-6 h-6 animate-spin" style={{ animationDuration: '8s' }} />
               </div>
               <div>
-                <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-[#869397] block">
+                <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-slate-400 block">
                   Est. Warning Lead Time
                 </span>
-                <span className="text-2xl font-bold font-mono text-[#4cd7f6]">
+                <span className="text-2xl font-extrabold font-mono text-cyan-400">
                   ~{leadTimeMinutes} mins
                 </span>
               </div>
@@ -139,12 +140,12 @@ export const RiskSummaryCard: React.FC<RiskSummaryCardProps> = ({
         </div>
 
         {/* Description & Contributing Summary */}
-        <div className="pt-3 border-t border-[#222a3d] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
-          <p className="text-[#dae2fd]">
+        <div className="pt-3 border-t border-slate-700/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs font-sans">
+          <p className="text-slate-200 font-medium leading-relaxed">
             {riskColorConfig.desc}
           </p>
-          <div className="text-[#869397] font-mono text-[11px] shrink-0">
-            Surge Momentum: <span className="text-white font-semibold font-mono">{primaryZone.rate_of_rise > 0 ? `+${primaryZone.rate_of_rise}` : primaryZone.rate_of_rise} m/hr</span>
+          <div className="text-slate-400 font-mono text-[11px] shrink-0 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-800">
+            Surge Momentum: <span className="text-white font-extrabold font-mono">{primaryZone.rate_of_rise > 0 ? `+${primaryZone.rate_of_rise}` : primaryZone.rate_of_rise} m/hr</span>
           </div>
         </div>
       </div>
