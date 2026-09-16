@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   ExternalLink,
   Zap,
+  Droplets,
 } from 'lucide-react';
 import { ZoneState } from '../types';
 
@@ -25,6 +26,7 @@ export type ActiveViewType =
   | 'overview'
   | 'gis-map'
   | 'hydrograph'
+  | 'water-content'
   | 'xai'
   | 'simulator'
   | 'nodes'
@@ -96,6 +98,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       icon: LineChart,
       badge: '+45m AI',
       badgeColor: 'bg-[#ffb95f]/15 text-[#ffb95f] border-[#ffb95f]/40',
+    },
+    {
+      id: 'water-content',
+      label: 'Water Content & Runoff',
+      shortLabel: 'Water Content',
+      description: 'Soil Saturation (VWC%) & Channel Discharge',
+      icon: Droplets,
+      badge: 'VWC %',
+      badgeColor: 'bg-[#06b6d4]/15 text-[#4cd7f6] border-[#06b6d4]/40',
     },
     {
       id: 'xai',

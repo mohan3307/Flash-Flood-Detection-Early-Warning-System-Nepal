@@ -73,8 +73,11 @@ class SimulationEngine:
                 "contributions": {"rainfall_intensity": 10, "water_level": 15, "rate_of_rise": 5, "recent_trend": 8},
                 "risk_factors": ["Normal seasonal river baseflow"],
                 "is_false_alarm": False,
-                "false_alarm_message": None,
                 "recommended_action": "Continue automated environmental monitoring.",
+                "soil_water_content_pct": 38.5,
+                "channel_discharge_m3s": round(32.0 * (z["base_water_level"] ** 1.6), 1),
+                "soil_moisture_depths": {"topsoil_10cm": 42.0, "rootzone_40cm": 38.0, "deep_100cm": 35.0},
+                "runoff_coefficient": 0.18,
                 "last_update": datetime.utcnow().isoformat()
             }
             # Prime buffers with calm base state
@@ -185,6 +188,19 @@ class SimulationEngine:
             state["is_false_alarm"] = is_fa or (self.current_scenario == "false_alarm")
             state["false_alarm_message"] = false_alarm_msg
             state["recommended_action"] = self._get_recommendation(risk_level, code)
+            
+            # Real-time Volumetric Water Content (VWC) & Infiltration Physics
+            vwc = round(min(98.5, max(28.0, 34.0 + (feats["rainfall_intensity"] * 0.48) + (feats["water_level"] * 7.2))), 1)
+            state["soil_water_content_pct"] = vwc
+            state["soil_moisture_depths"] = {
+                "topsoil_10cm": round(min(99.0, vwc * 1.05), 1),
+                "rootzone_40cm": round(min(96.0, vwc * 0.94), 1),
+                "deep_100cm": round(min(92.0, vwc * 0.86), 1),
+            }
+            # Runoff coefficient C rises sharply when soil reaches saturation > 80%
+            state["runoff_coefficient"] = round(min(0.96, max(0.14, 0.12 + (vwc / 100.0) ** 2.3 * 0.88)), 2)
+            # Channel Volumetric Discharge in m3/s (Manning's open channel flow)
+            state["channel_discharge_m3s"] = round(max(8.5, 33.5 * (feats["water_level"] ** 1.65)), 1)
             state["last_update"] = timestamp
 
             # Battery drain/signal fluctuation

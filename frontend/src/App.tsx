@@ -7,6 +7,7 @@ import { IntegrationsModal } from './components/integrations/IntegrationsModal';
 import { OverviewView } from './components/views/OverviewView';
 import { GisMapView } from './components/views/GisMapView';
 import { HydrographView } from './components/views/HydrographView';
+import { WaterContentView } from './components/views/WaterContentView';
 import { XaiView } from './components/views/XaiView';
 import { SimulatorView } from './components/views/SimulatorView';
 import { SensorNodesView } from './components/views/SensorNodesView';
@@ -23,6 +24,7 @@ import {
   MapPin,
   LineChart,
   BrainCircuit,
+  Droplets,
   SlidersHorizontal,
   AlertTriangle,
   ChevronRight,
@@ -132,6 +134,10 @@ export function App() {
     hydrograph: {
       title: 'HYDROGRAPH & AI CREST FORECASTING',
       subtitle: 'Dual-Axis River Stage, Cloudburst Intensity & +45m Projection',
+    },
+    'water-content': {
+      title: 'WATER CONTENT & INFILTRATION HYDRODYNAMICS',
+      subtitle: 'Soil Moisture (VWC%), Infiltration Capacity & Channel Discharge Flow',
     },
     xai: {
       title: 'EXPLAINABLE AI & SHAP ATTRIBUTION',
@@ -273,6 +279,7 @@ export function App() {
                 { id: 'overview' as ActiveViewType, label: 'Overview', icon: LayoutDashboard },
                 { id: 'gis-map' as ActiveViewType, label: 'GIS Map', icon: MapPin },
                 { id: 'hydrograph' as ActiveViewType, label: 'Hydrograph', icon: LineChart },
+                { id: 'water-content' as ActiveViewType, label: 'Water Content', icon: Droplets },
                 { id: 'xai' as ActiveViewType, label: 'XAI', icon: BrainCircuit },
                 { id: 'simulator' as ActiveViewType, label: 'Simulator', icon: SlidersHorizontal },
                 { id: 'nodes' as ActiveViewType, label: 'Nodes', icon: Radio },
@@ -322,6 +329,15 @@ export function App() {
           {activeView === 'hydrograph' && (
             <HydrographView
               history={history}
+              activeZone={activeZone}
+            />
+          )}
+
+          {activeView === 'water-content' && (
+            <WaterContentView
+              zones={frame.zones}
+              selectedZoneCode={selectedZoneCode}
+              onSelectZone={(code) => setSelectedZoneCode(code)}
               activeZone={activeZone}
             />
           )}

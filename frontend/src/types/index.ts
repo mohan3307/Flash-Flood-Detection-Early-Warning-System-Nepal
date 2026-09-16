@@ -33,6 +33,14 @@ export interface ZoneState {
   is_false_alarm: boolean;
   false_alarm_message: string | null;
   recommended_action: string;
+  soil_water_content_pct?: number;
+  channel_discharge_m3s?: number;
+  soil_moisture_depths?: {
+    topsoil_10cm: number;
+    rootzone_40cm: number;
+    deep_100cm: number;
+  };
+  runoff_coefficient?: number;
   last_update: string;
 }
 
