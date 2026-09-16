@@ -115,7 +115,12 @@ export const ActiveAlerts: React.FC<ActiveAlertsProps> = ({ alerts, leadTimeMinu
       {alerts.map((alert) => (
         <div
           key={alert.id}
-          className="rounded-xl bg-gradient-to-r from-[#93000a]/50 via-[#171f33] to-[#0b1326] border border-[#ef4444] p-5 shadow-2xl shadow-red-950/40 relative overflow-hidden reticle-box"
+          className="rounded-xl border border-[#ef4444] p-5 shadow-2xl shadow-red-950/40 relative overflow-hidden reticle-box"
+          style={{
+            backgroundImage: "linear-gradient(to right, rgba(147, 0, 10, 0.88), rgba(23, 31, 51, 0.90), rgba(11, 19, 38, 0.95)), url('/assets/images/flood_warning_bg.jpg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
         >
           {/* Animated Hazard Edge Stripe */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#ef4444] via-[#ffb95f] to-[#ef4444] animate-pulse" />

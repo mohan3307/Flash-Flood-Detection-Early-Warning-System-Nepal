@@ -155,16 +155,20 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-[#080f20] text-[#dae2fd] flex flex-col selection:bg-[#06b6d4] selection:text-[#003640] relative">
-      {/* Mild Flood Warning Tactical Background Wallpaper */}
+      {/* Tactical Flood Warning Background Wallpaper in System Theme */}
       <div
-        className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat opacity-[0.15] filter brightness-90 contrast-125"
+        className="fixed inset-0 pointer-events-none z-0 bg-cover bg-no-repeat transition-all duration-700"
         style={{
           backgroundImage: "url('/assets/images/flood_warning_bg.jpg')",
           backgroundAttachment: 'fixed',
+          backgroundPosition: 'center 18%',
+          opacity: 0.38,
+          filter: 'brightness(0.65) contrast(1.25) saturate(1.15)',
         }}
       />
-      {/* Dark Tactical Vignette Overlay for Crisp Readability */}
-      <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#080f20]/65 via-[#0b1326]/80 to-[#080f20]/95" />
+      {/* Cohesive Theme Tint Overlay (Deep Alpine Navy + Cyan Glow) */}
+      <div className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#070e1c]/70 via-[#0b1326]/60 to-[#070e1c]/90" />
+      <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#06b6d4]/15 via-transparent to-transparent" />
 
       {/* Top Header */}
       <Header
