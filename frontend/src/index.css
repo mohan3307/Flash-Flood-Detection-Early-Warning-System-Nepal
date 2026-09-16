@@ -149,3 +149,26 @@
 .leaflet-popup-tip {
   background: #131b2e !important;
 }
+
+/* Animated Flowing Dark Blue River Path */
+@keyframes riverFlow {
+  from {
+    stroke-dashoffset: 32;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.leaflet-flowing-river {
+  stroke-dasharray: 10, 14;
+  animation: riverFlow 1.6s linear infinite;
+}
+
+.leaflet-village-icon {
+  transition: all 0.25s ease-in-out;
+}
+
+.leaflet-village-icon:hover {
+  transform: scale(1.3);
+}

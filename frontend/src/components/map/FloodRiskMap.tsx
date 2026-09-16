@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { ZoneState } from '../../types';
@@ -149,6 +150,109 @@ const HAZARD_CORRIDORS: { [zoneCode: string]: [number, number][] } = {
   ],
 };
 
+interface SettlementPoint {
+  id: string;
+  name: string;
+  type: 'city' | 'village' | 'town';
+  lat: number;
+  lng: number;
+  population?: string;
+  district: string;
+  elevation_m: number;
+}
+
+// Villages and Cities marked by Dark Green Circles
+const VILLAGES_AND_CITIES: SettlementPoint[] = [
+  {
+    id: 'city-chautara',
+    name: 'Chautara Municipal City',
+    type: 'city',
+    lat: 27.7720,
+    lng: 85.7100,
+    population: '51,000+',
+    district: 'Sindhupalchok HQ',
+    elevation_m: 1450,
+  },
+  {
+    id: 'town-melamchi',
+    name: 'Melamchi Bazaar Town',
+    type: 'town',
+    lat: 27.8335,
+    lng: 85.5830,
+    population: '28,000+',
+    district: 'Melamchi Municipality',
+    elevation_m: 870,
+  },
+  {
+    id: 'village-helambu',
+    name: 'Helambu Himalayan Village',
+    type: 'village',
+    lat: 27.9750,
+    lng: 85.5800,
+    population: '7,200',
+    district: 'Helambu Rural Municipality',
+    elevation_m: 2480,
+  },
+  {
+    id: 'village-talamarang',
+    name: 'Talamarang Riverside Village',
+    type: 'village',
+    lat: 27.8820,
+    lng: 85.5780,
+    population: '4,500',
+    district: 'Melamchi Catchment',
+    elevation_m: 1150,
+  },
+  {
+    id: 'village-bahunepati',
+    name: 'Bahunepati Plains Village',
+    type: 'village',
+    lat: 27.7680,
+    lng: 85.5970,
+    population: '6,100',
+    district: 'Indrawati Basin',
+    elevation_m: 720,
+  },
+  {
+    id: 'village-tipeni',
+    name: 'Tipeni Gorge Village',
+    type: 'village',
+    lat: 27.9150,
+    lng: 85.5720,
+    population: '2,800',
+    district: 'Upper Valley Sector',
+    elevation_m: 1620,
+  },
+  {
+    id: 'village-indrawati',
+    name: 'Indrawati Delta Settlement',
+    type: 'village',
+    lat: 27.7150,
+    lng: 85.6050,
+    population: '8,400',
+    district: 'Confluence Sector',
+    elevation_m: 640,
+  },
+];
+
+// Dark Blue Flowing Water River Trajectory (Melamchi to Indrawati River bed)
+const MELAMCHI_RIVER_COURSE: [number, number][] = [
+  [28.0050, 85.5650], // Langtang Glacier Source
+  [27.9880, 85.5720], // Helambu Headwaters Gorge
+  [27.9620, 85.5810], // Upper Melamchi Gorge (Zone A)
+  [27.9350, 85.5760], // Tipeni Gorge Passage
+  [27.9010, 85.5740], // Sermathang Bridge Stream
+  [27.8720, 85.5790], // Talamarang Valley Reach
+  [27.8480, 85.5800], // Pul Bazaar Approach
+  [27.8329, 85.5818], // Melamchi Pul Bazaar Bridge (Zone B)
+  [27.8100, 85.5870], // Lower Floodplain Beds
+  [27.7850, 85.5910], // Mahadevsthan Reach
+  [27.7654, 85.5942], // Bahunepati Plains (Zone C)
+  [27.7400, 85.5980], // Lower Terraces
+  [27.7121, 85.6025], // Indrawati River Confluence (Zone D)
+  [27.6850, 85.6180], // Downstream Sunkoshi Trunk River
+];
+
 export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
   zones,
   selectedZoneCode,
@@ -163,8 +267,9 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
   const markersRef = useRef<{ [key: string]: L.CircleMarker }>({});
   const hazardPolygonsRef = useRef<{ [key: string]: L.Polygon }>({});
   const infrastructureLayerRef = useRef<L.LayerGroup | null>(null);
+  const villagesLayerRef = useRef<L.LayerGroup | null>(null);
+  const riverLayerRef = useRef<L.LayerGroup | null>(null);
   const radarLayerRef = useRef<L.LayerGroup | null>(null);
-  const riverPolylineRef = useRef<L.Polyline | null>(null);
 
   // Google Maps API Key State
   const [googleApiKey, setGoogleApiKey] = useState<string>(() => {
@@ -179,6 +284,8 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
   // UI state toggles: Default to satellite (Esri World Imagery) for immediate high-resolution Himalayan satellite view
   const [activeBasemap, setActiveBasemap] = useState<BasemapType>('satellite');
   const [showShelters, setShowShelters] = useState<boolean>(true);
+  const [showVillages, setShowVillages] = useState<boolean>(true);
+  const [showRiverFlow, setShowRiverFlow] = useState<boolean>(true);
   const [showInundation, setShowInundation] = useState<boolean>(true);
   const [showRadar, setShowRadar] = useState<boolean>(true);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -278,24 +385,14 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
     const infraGroup = L.layerGroup().addTo(map);
     infrastructureLayerRef.current = infraGroup;
 
+    const villagesGroup = L.layerGroup().addTo(map);
+    villagesLayerRef.current = villagesGroup;
+
+    const riverGroup = L.layerGroup().addTo(map);
+    riverLayerRef.current = riverGroup;
+
     const radarGroup = L.layerGroup().addTo(map);
     radarLayerRef.current = radarGroup;
-
-    // River trajectory line connecting the 4 monitoring stations
-    const riverCoords: [number, number][] = [
-      [27.9712, 85.5784], // Zone A: Upper Gorge (2480m)
-      [27.8329, 85.5818], // Zone B: Pul Bazaar (870m)
-      [27.7654, 85.5942], // Zone C: Bahunepati Plain (720m)
-      [27.7121, 85.6025], // Zone D: Confluence (640m)
-    ];
-
-    const riverLine = L.polyline(riverCoords, {
-      color: '#4cd7f6',
-      weight: 3.5,
-      opacity: 0.75,
-      dashArray: '5, 8',
-    }).addTo(map);
-    riverPolylineRef.current = riverLine;
 
     // Create Inundation Hazard Polygons
     Object.entries(HAZARD_CORRIDORS).forEach(([code, polygonCoords]) => {
@@ -425,6 +522,137 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
       group.addLayer(marker);
     });
   }, [showShelters]);
+
+  // Handle Villages & Cities Layer (Dark Green Circle Markers)
+  useEffect(() => {
+    if (!villagesLayerRef.current) return;
+    const group = villagesLayerRef.current;
+    group.clearLayers();
+
+    if (!showVillages) return;
+
+    VILLAGES_AND_CITIES.forEach((v) => {
+      const isCity = v.type === 'city';
+      const isTown = v.type === 'town';
+      const radius = isCity ? 10 : isTown ? 8 : 7;
+
+      // Dark Green Circle Marker
+      const circleMarker = L.circleMarker([v.lat, v.lng], {
+        radius: radius,
+        color: '#064e3b', // Dark Green Stroke
+        fillColor: '#047857', // Dark Green Fill
+        fillOpacity: 0.95,
+        weight: 2.5,
+      });
+
+      // Dark Green Custom Label Icon
+      const customDivIcon = L.divIcon({
+        className: 'leaflet-village-icon',
+        html: `
+          <div style="
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            white-space: nowrap;
+          ">
+            <div style="
+              width: ${radius * 2}px;
+              height: ${radius * 2}px;
+              border-radius: 50%;
+              background: #047857;
+              border: 2px solid #10b981;
+              box-shadow: 0 0 10px rgba(4, 120, 87, 0.8);
+            "></div>
+            <span style="
+              background: rgba(4, 40, 25, 0.92);
+              color: #a7f3d0;
+              border: 1.5px solid #059669;
+              padding: 2px 6px;
+              border-radius: 4px;
+              font-size: 10px;
+              font-family: 'Space Grotesk', sans-serif;
+              font-weight: 700;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            ">
+              ${isCity ? '🏛️' : isTown ? '🏘️' : '🏡'} ${v.name}
+            </span>
+          </div>
+        `,
+        iconSize: [120, 20],
+        iconAnchor: [radius, radius],
+      });
+
+      const labelMarker = L.marker([v.lat, v.lng], { icon: customDivIcon });
+
+      const popupHtml = `
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #dae2fd; min-width: 220px;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px; border-bottom: 1px solid #059669; padding-bottom: 4px;">
+            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #047857; border: 1.5px solid #10b981;"></span>
+            <strong style="color: #a7f3d0; font-size: 12px; font-family: 'Space Grotesk', sans-serif;">${v.name}</strong>
+          </div>
+          <div style="font-size: 10px; color: #94a3b8; margin-bottom: 4px;">
+            Settlement Type: <strong style="color: #ffffff; text-transform: uppercase;">${v.type}</strong>
+          </div>
+          <div style="font-size: 10px; color: #94a3b8; margin-bottom: 4px;">
+            Jurisdiction: <strong style="color: #dae2fd;">${v.district}</strong>
+          </div>
+          <div style="font-size: 10px; color: #94a3b8; margin-bottom: 4px;">
+            Elevation: <strong style="color: #4cd7f6;">${v.elevation_m}m MSL</strong>
+          </div>
+          ${v.population ? `<div style="font-size: 10px; color: #94a3b8;">Population: <strong style="color: #ffb95f;">${v.population}</strong></div>` : ''}
+        </div>
+      `;
+
+      labelMarker.bindPopup(popupHtml);
+      circleMarker.bindPopup(popupHtml);
+
+      group.addLayer(circleMarker);
+      group.addLayer(labelMarker);
+    });
+  }, [showVillages]);
+
+  // Handle Dark Blue Flowing Water River Layer
+  useEffect(() => {
+    if (!riverLayerRef.current) return;
+    const group = riverLayerRef.current;
+    group.clearLayers();
+
+    if (!showRiverFlow) return;
+
+    // 1. Dark Blue River Channel Casing
+    const riverCasing = L.polyline(MELAMCHI_RIVER_COURSE, {
+      color: '#0f172a',
+      weight: 8,
+      opacity: 0.85,
+    });
+    group.addLayer(riverCasing);
+
+    // 2. Main Dark Blue Water Channel Line
+    const riverMain = L.polyline(MELAMCHI_RIVER_COURSE, {
+      color: '#1d4ed8', // Dark Blue
+      weight: 5.5,
+      opacity: 0.95,
+    });
+    group.addLayer(riverMain);
+
+    // 3. Dark Blue Flowing Water Animation Overlay Line
+    const riverFlowLine = L.polyline(MELAMCHI_RIVER_COURSE, {
+      color: '#38bdf8', // Water flow highlight dash
+      weight: 2.5,
+      opacity: 0.9,
+      className: 'leaflet-flowing-river',
+    });
+    group.addLayer(riverFlowLine);
+
+    riverMain.bindTooltip(
+      `<div style="font-family: 'Space Grotesk', sans-serif; font-size: 11px;">
+        <strong style="color: #38bdf8;">🌊 MELAMCHI-INDRAWATI RIVER CHANNEL</strong><br/>
+        <span style="font-size: 10px; color: #94a3b8;">Flowing Water (Dark Blue Stream: 2,480m → 640m MSL)</span>
+      </div>`,
+      { sticky: true }
+    );
+  }, [showRiverFlow]);
 
   // Update Radar Layer based on Scenario and Rainfall
   useEffect(() => {
@@ -751,6 +979,32 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
 
           {/* Overlays Toggles */}
           <div className="flex items-center gap-1 bg-[#0b1326] p-1 rounded-lg border border-[#222a3d]">
+            <button
+              onClick={() => setShowVillages(!showVillages)}
+              className={`p-1.5 rounded text-[10px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
+                showVillages
+                  ? 'bg-[#047857]/25 text-[#a7f3d0] border border-[#059669]'
+                  : 'text-[#869397] hover:text-white'
+              }`}
+              title="Toggle Villages & Cities Marking Points (Dark Green Circles)"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-[#047857] border border-[#10b981]" />
+              <span className="hidden sm:inline">Villages & Cities</span>
+            </button>
+
+            <button
+              onClick={() => setShowRiverFlow(!showRiverFlow)}
+              className={`p-1.5 rounded text-[10px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
+                showRiverFlow
+                  ? 'bg-[#1d4ed8]/25 text-[#60a5fa] border border-[#2563eb]'
+                  : 'text-[#869397] hover:text-white'
+              }`}
+              title="Toggle Dark Blue Flowing Water River Line"
+            >
+              <span className="w-3 h-1 bg-[#1d4ed8] rounded" />
+              <span className="hidden sm:inline">Dark Blue River</span>
+            </button>
+
             <button
               onClick={() => setShowInundation(!showInundation)}
               className={`p-1.5 rounded text-[10px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
