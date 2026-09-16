@@ -19,6 +19,13 @@ ENV/
 backend/sensora.db
 *.sqlite3
 
+# Environment variables & API keys
+.env
+.env.local
+*.env
+*.env.local
+!*.env.example
+
 # Logs & temporary files
 *.log
 npm-debug.log*

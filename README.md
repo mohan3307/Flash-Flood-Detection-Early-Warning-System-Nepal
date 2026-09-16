@@ -234,6 +234,31 @@ The backend automatically buffers the readings, computes derivatives, runs ML in
 
 ---
 
-## 17. Limitations & Disclaimer
+## 17. Google Maps API Key Configuration
+
+SENSORA includes native support for **Google Maps Platform** layers alongside our tactical GIS overlays (dynamic inundation corridors, safe highlands evacuation shelters, Doppler radar, and elevation gradient widget):
+
+### Supported Google Maps Layers:
+1. **Google Hybrid** (`lyrs=y`): Orbital high-resolution photography overlaid with labeled roads, settlements, and borders.
+2. **Google Satellite** (`lyrs=s`): High-resolution imagery of Himalayan mountain ridges and riverbeds.
+3. **Google Terrain** (`lyrs=p`): Detailed mountain elevation contours and shaded topographical reliefs.
+4. **Google Roadmap** (`lyrs=m`): Clean municipal grid and street networks.
+
+### How to Configure Your Google Maps API Key:
+- **Option A (Interactive In-App Modal - Recommended)**:
+  1. In the GIS Catchment Map header, click the **"Configure Google Key"** button.
+  2. Paste your Google Cloud API key (`AIzaSy...`).
+  3. Click **"Test Key"** to verify connection, then click **"Save & Activate"**.
+  4. The key is securely saved in your browser's `localStorage` and immediately activates Google Maps without restarting the server!
+- **Option B (Environment Variable)**:
+  1. Copy `frontend/.env.example` to `frontend/.env`.
+  2. Set `VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key`.
+  3. Rebuild or run `npm run dev`.
+
+*Note: If no Google Maps API key is provided, SENSORA seamlessly falls back to free high-resolution Open GIS layers (CARTO Tactical Dark, Esri World Imagery, OpenTopoMap, and OpenStreetMap).*
+
+---
+
+## 18. Limitations & Disclaimer
 - **Simulation Scope**: All sensor readings are synthetically generated for research, architecture demonstration, and hackathon presentation.
 - **Real-World Calibration**: Real-world deployment requires basin-specific hydrological calibration (HEC-HMS or rating curve modeling) and certified physical telemetry stations.
