@@ -150,10 +150,19 @@
   background: #131b2e !important;
 }
 
-/* Animated Flowing Dark Blue River Path */
+/* Animated Flowing Dark Blue River Path & Comprehensive Basin Waterflows */
 @keyframes riverFlow {
   from {
-    stroke-dashoffset: 32;
+    stroke-dashoffset: 40;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes riverFlowFast {
+  from {
+    stroke-dashoffset: 40;
   }
   to {
     stroke-dashoffset: 0;
@@ -161,8 +170,18 @@
 }
 
 .leaflet-flowing-river {
-  stroke-dasharray: 10, 14;
-  animation: riverFlow 1.6s linear infinite;
+  stroke-dasharray: 12, 14;
+  animation: riverFlow 1.4s linear infinite;
+}
+
+.leaflet-flowing-river-fast {
+  stroke-dasharray: 8, 10;
+  animation: riverFlowFast 0.75s linear infinite;
+}
+
+.leaflet-flowing-river-tributary {
+  stroke-dasharray: 6, 8;
+  animation: riverFlow 1.8s linear infinite;
 }
 
 .leaflet-village-icon {

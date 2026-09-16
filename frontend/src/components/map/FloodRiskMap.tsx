@@ -295,22 +295,226 @@ const VILLAGES_AND_CITIES: SettlementPoint[] = [
   },
 ];
 
-// Dark Blue Flowing Water River Trajectory (Melamchi to Indrawati River bed)
-const MELAMCHI_RIVER_COURSE: [number, number][] = [
-  [28.0050, 85.5650], // Langtang Glacier Source
-  [27.9880, 85.5720], // Helambu Headwaters Gorge
-  [27.9620, 85.5810], // Upper Melamchi Gorge (Zone A)
-  [27.9350, 85.5760], // Tipeni Gorge Passage
-  [27.9010, 85.5740], // Sermathang Bridge Stream
-  [27.8720, 85.5790], // Talamarang Valley Reach
-  [27.8480, 85.5800], // Pul Bazaar Approach
-  [27.8329, 85.5818], // Melamchi Pul Bazaar Bridge (Zone B)
-  [27.8100, 85.5870], // Lower Floodplain Beds
-  [27.7850, 85.5910], // Mahadevsthan Reach
-  [27.7654, 85.5942], // Bahunepati Plains (Zone C)
-  [27.7400, 85.5980], // Lower Terraces
-  [27.7121, 85.6025], // Indrawati River Confluence (Zone D)
-  [27.6850, 85.6180], // Downstream Sunkoshi Trunk River
+// Complete Interconnected River Network (9 Major Regional Waterflow Systems & Glacial Tributaries)
+interface RiverSystem {
+  id: string;
+  name: string;
+  type: 'main_river' | 'tributary' | 'glacial_torrent' | 'major_trunk';
+  color: string;
+  casingColor: string;
+  flowColor: string;
+  weight: number;
+  flowClass: string;
+  course: [number, number][];
+  sourceElevation: number;
+  destinationElevation: number;
+  avgDischarge: string;
+  description: string;
+}
+
+const RIVER_SYSTEMS: RiverSystem[] = [
+  {
+    id: 'melamchi-main',
+    name: 'Melamchi Khola Main Channel',
+    type: 'main_river',
+    color: '#1d4ed8',
+    casingColor: '#0f172a',
+    flowColor: '#38bdf8',
+    weight: 6,
+    flowClass: 'leaflet-flowing-river-fast',
+    sourceElevation: 2480,
+    destinationElevation: 640,
+    avgDischarge: '145 m³/s',
+    description: 'Langtang Himalayan glacier headwaters flowing through Helambu gorge to Melamchi Pul Bazaar & Indrawati confluence.',
+    course: [
+      [28.0050, 85.5650],
+      [27.9880, 85.5720],
+      [27.9620, 85.5810],
+      [27.9350, 85.5760],
+      [27.9010, 85.5740],
+      [27.8720, 85.5790],
+      [27.8480, 85.5800],
+      [27.8329, 85.5818],
+      [27.8100, 85.5870],
+      [27.7850, 85.5910],
+      [27.7654, 85.5942],
+      [27.7400, 85.5980],
+      [27.7121, 85.6025],
+      [27.6850, 85.6180],
+    ],
+  },
+  {
+    id: 'indrawati-trunk',
+    name: 'Indrawati River Main Trunk',
+    type: 'major_trunk',
+    color: '#1e40af',
+    casingColor: '#020617',
+    flowColor: '#60a5fa',
+    weight: 7,
+    flowClass: 'leaflet-flowing-river',
+    sourceElevation: 3200,
+    destinationElevation: 610,
+    avgDischarge: '380 m³/s',
+    description: 'Major regional hydrological trunk fed by Panchpokhari snowfields, joining Melamchi & emptying into Sunkoshi at Dolalghat.',
+    course: [
+      [28.0200, 85.7100],
+      [27.9800, 85.6900],
+      [27.9400, 85.6700],
+      [27.8900, 85.6400],
+      [27.8500, 85.6100],
+      [27.8100, 85.5950],
+      [27.7654, 85.5942],
+      [27.7300, 85.6000],
+      [27.6950, 85.6200],
+      [27.6700, 85.6600],
+      [27.6375, 85.7061],
+    ],
+  },
+  {
+    id: 'yangri-khola',
+    name: 'Yangri Khola Glacial Tributary',
+    type: 'tributary',
+    color: '#0284c7',
+    casingColor: '#0f172a',
+    flowColor: '#7dd3fc',
+    weight: 4.5,
+    flowClass: 'leaflet-flowing-river-tributary',
+    sourceElevation: 3800,
+    destinationElevation: 1400,
+    avgDischarge: '62 m³/s',
+    description: 'High-altitude glacial stream flowing from Yangri Peak ridge into Upper Melamchi catchment.',
+    course: [
+      [28.0100, 85.6300],
+      [27.9700, 85.6200],
+      [27.9400, 85.6000],
+      [27.9150, 85.5880],
+      [27.8950, 85.5800],
+    ],
+  },
+  {
+    id: 'larke-khola',
+    name: 'Larke Khola High Torrent',
+    type: 'glacial_torrent',
+    color: '#0369a1',
+    casingColor: '#0f172a',
+    flowColor: '#38bdf8',
+    weight: 4.5,
+    flowClass: 'leaflet-flowing-river-fast',
+    sourceElevation: 4100,
+    destinationElevation: 1850,
+    avgDischarge: '85 m³/s',
+    description: 'Steep moraine debris torrent feeding catastrophic burst surges into Upper Helambu gorge.',
+    course: [
+      [28.0300, 85.5400],
+      [27.9950, 85.5500],
+      [27.9700, 85.5650],
+      [27.9620, 85.5810],
+    ],
+  },
+  {
+    id: 'jharang-khola',
+    name: 'Jharang Khola Ridge Stream',
+    type: 'tributary',
+    color: '#2563eb',
+    casingColor: '#0f172a',
+    flowColor: '#93c5fd',
+    weight: 3.5,
+    flowClass: 'leaflet-flowing-river-tributary',
+    sourceElevation: 2100,
+    destinationElevation: 1150,
+    avgDischarge: '28 m³/s',
+    description: 'Eastern catchment tributary joining Melamchi Khola near Talamarang settlement.',
+    course: [
+      [27.9200, 85.6400],
+      [27.8900, 85.6100],
+      [27.8720, 85.5790],
+    ],
+  },
+  {
+    id: 'bhotekoshi-river',
+    name: 'Bhotekoshi Himalayan Torrent',
+    type: 'glacial_torrent',
+    color: '#1d4ed8',
+    casingColor: '#020617',
+    flowColor: '#60a5fa',
+    weight: 6.5,
+    flowClass: 'leaflet-flowing-river-fast',
+    sourceElevation: 2600,
+    destinationElevation: 780,
+    avgDischarge: '420 m³/s',
+    description: 'Trans-Himalayan torrent originating in Tibet border glaciers, flowing past Tatopani & Barhabise to Lamosangu.',
+    course: [
+      [27.9500, 85.9300],
+      [27.9100, 85.9000],
+      [27.8600, 85.8700],
+      [27.7800, 85.8500],
+      [27.7380, 85.8320],
+    ],
+  },
+  {
+    id: 'sunkoshi-trunk',
+    name: 'Sunkoshi River Major System',
+    type: 'major_trunk',
+    color: '#1e3a8a',
+    casingColor: '#020617',
+    flowColor: '#38bdf8',
+    weight: 8,
+    flowClass: 'leaflet-flowing-river',
+    sourceElevation: 780,
+    destinationElevation: 450,
+    avgDischarge: '850 m³/s',
+    description: 'Massive arterial river draining Sindhupalchok & Kavrepalanchok into the Koshi River basin.',
+    course: [
+      [27.7800, 85.8500],
+      [27.7380, 85.8320],
+      [27.7000, 85.7800],
+      [27.6700, 85.7400],
+      [27.6375, 85.7061],
+      [27.5900, 85.7500],
+      [27.5500, 85.8200],
+    ],
+  },
+  {
+    id: 'bagmati-river',
+    name: 'Bagmati River Main Stem',
+    type: 'main_river',
+    color: '#1d4ed8',
+    casingColor: '#0f172a',
+    flowColor: '#60a5fa',
+    weight: 5.5,
+    flowClass: 'leaflet-flowing-river',
+    sourceElevation: 2700,
+    destinationElevation: 1280,
+    avgDischarge: '210 m³/s',
+    description: 'Primary drainage river of the Kathmandu Valley originating at Sundarijal in Shivapuri Hills.',
+    course: [
+      [28.0000, 85.4500],
+      [27.8000, 85.4200],
+      [27.7400, 85.3600],
+      [27.7172, 85.3240],
+      [27.6800, 85.3100],
+      [27.6500, 85.2900],
+    ],
+  },
+  {
+    id: 'bishnumati-river',
+    name: 'Bishnumati Valley Tributary',
+    type: 'tributary',
+    color: '#0284c7',
+    casingColor: '#0f172a',
+    flowColor: '#93c5fd',
+    weight: 3.5,
+    flowClass: 'leaflet-flowing-river-tributary',
+    sourceElevation: 1950,
+    destinationElevation: 1290,
+    avgDischarge: '45 m³/s',
+    description: 'Western Kathmandu urban river system feeding into Bagmati River at Teku confluence.',
+    course: [
+      [27.7800, 85.3100],
+      [27.7300, 85.3050],
+      [27.7050, 85.3080],
+    ],
+  },
 ];
 
 export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
@@ -673,7 +877,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
     });
   }, [showVillages]);
 
-  // Handle Dark Blue Flowing Water River Layer
+  // Handle Dark Blue Flowing Water River Layer (All 9 Regional River Waterflow Systems)
   useEffect(() => {
     if (!riverLayerRef.current) return;
     const group = riverLayerRef.current;
@@ -681,38 +885,67 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
 
     if (!showRiverFlow) return;
 
-    // 1. Dark Blue River Channel Casing
-    const riverCasing = L.polyline(MELAMCHI_RIVER_COURSE, {
-      color: '#0f172a',
-      weight: 8,
-      opacity: 0.85,
-    });
-    group.addLayer(riverCasing);
+    RIVER_SYSTEMS.forEach((river) => {
+      // 1. Dark Blue River Channel Casing
+      const riverCasing = L.polyline(river.course, {
+        color: river.casingColor,
+        weight: river.weight + 3.5,
+        opacity: 0.85,
+      });
+      group.addLayer(riverCasing);
 
-    // 2. Main Dark Blue Water Channel Line
-    const riverMain = L.polyline(MELAMCHI_RIVER_COURSE, {
-      color: '#1d4ed8', // Dark Blue
-      weight: 5.5,
-      opacity: 0.95,
-    });
-    group.addLayer(riverMain);
+      // 2. Main Dark Blue Water Channel Line
+      const riverMain = L.polyline(river.course, {
+        color: river.color,
+        weight: river.weight,
+        opacity: 0.95,
+      });
+      group.addLayer(riverMain);
 
-    // 3. Dark Blue Flowing Water Animation Overlay Line
-    const riverFlowLine = L.polyline(MELAMCHI_RIVER_COURSE, {
-      color: '#38bdf8', // Water flow highlight dash
-      weight: 2.5,
-      opacity: 0.9,
-      className: 'leaflet-flowing-river',
-    });
-    group.addLayer(riverFlowLine);
+      // 3. Dark Blue Flowing Water Animation Overlay Line
+      const riverFlowLine = L.polyline(river.course, {
+        color: river.flowColor,
+        weight: Math.max(2, river.weight - 2.5),
+        opacity: 0.95,
+        className: river.flowClass,
+      });
+      group.addLayer(riverFlowLine);
 
-    riverMain.bindTooltip(
-      `<div style="font-family: 'Space Grotesk', sans-serif; font-size: 11px;">
-        <strong style="color: #38bdf8;">🌊 MELAMCHI-INDRAWATI RIVER CHANNEL</strong><br/>
-        <span style="font-size: 10px; color: #94a3b8;">Flowing Water (Dark Blue Stream: 2,480m → 640m MSL)</span>
-      </div>`,
-      { sticky: true }
-    );
+      // 4. Directional Waterflow Pulse Nodes along the stream course
+      river.course.forEach((coords, idx) => {
+        if (idx % 2 === 1) {
+          const flowMarker = L.circleMarker(coords, {
+            radius: Math.max(2, river.weight / 2.2),
+            color: river.flowColor,
+            fillColor: '#ffffff',
+            fillOpacity: 0.9,
+            weight: 1,
+          });
+          group.addLayer(flowMarker);
+        }
+      });
+
+      const tooltipContent = `
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 11px; min-width: 220px; color: #dae2fd;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 4px; margin-bottom: 6px;">
+            <strong style="color: ${river.flowColor}; font-size: 12px;">🌊 ${river.name}</strong>
+            <span style="font-size: 8px; font-weight: bold; background: #1d4ed830; color: ${river.flowColor}; padding: 1px 5px; border-radius: 3px; border: 1px solid ${river.flowColor}40;">
+              ${river.type.toUpperCase().replace('_', ' ')}
+            </span>
+          </div>
+          <div style="font-size: 10px; color: #94a3b8; margin-bottom: 6px; line-height: 1.3;">
+            ${river.description}
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 9px; font-family: 'JetBrains Mono', monospace; background: #0b1326; padding: 5px; border-radius: 4px; border: 1px solid #222a3d;">
+            <div>Elevation: <strong style="color: #ffffff;">${river.sourceElevation}m → ${river.destinationElevation}m</strong></div>
+            <div>Discharge: <strong style="color: #38bdf8;">${river.avgDischarge}</strong></div>
+          </div>
+        </div>
+      `;
+
+      riverMain.bindTooltip(tooltipContent, { sticky: true });
+      riverFlowLine.bindTooltip(tooltipContent, { sticky: true });
+    });
   }, [showRiverFlow]);
 
   // Update Radar Layer based on Scenario and Rainfall
@@ -1107,10 +1340,10 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
                   ? 'bg-[#1d4ed8]/25 text-[#60a5fa] border border-[#2563eb]'
                   : 'text-[#869397] hover:text-white'
               }`}
-              title="Toggle Dark Blue Flowing Water River Line"
+              title="Toggle All 9 Regional Dark Blue Flowing Water Rivers & Glacial Tributary Systems"
             >
               <span className="w-3 h-1 bg-[#1d4ed8] rounded" />
-              <span className="hidden sm:inline">Dark Blue River</span>
+              <span className="hidden sm:inline">All Waterflows (9 Rivers)</span>
             </button>
 
             <button
