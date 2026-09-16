@@ -175,70 +175,31 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
     );
   });
   const [isKeyModalOpen, setIsKeyModalOpen] = useState<boolean>(false);
-  const [basemapCategory, setBasemapCategory] = useState<'google' | 'tactical'>('google');
 
-  // UI state toggles
-  const [activeBasemap, setActiveBasemap] = useState<BasemapType>(() => {
-    const savedKey =
-      localStorage.getItem('sensora_google_maps_api_key') ||
-      (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string);
-    return savedKey ? 'google_hybrid' : 'tactical';
-  });
+  // UI state toggles: Default to satellite (Esri World Imagery) for immediate high-resolution Himalayan satellite view
+  const [activeBasemap, setActiveBasemap] = useState<BasemapType>('satellite');
   const [showShelters, setShowShelters] = useState<boolean>(true);
   const [showInundation, setShowInundation] = useState<boolean>(true);
   const [showRadar, setShowRadar] = useState<boolean>(true);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-  // Basemap Tile Configurations
+  // Basemap Tile Configurations (High-availability GIS providers)
   const getBasemapConfig = (type: BasemapType, key: string) => {
-    const keyParam = key ? `&key=${key}` : '';
     switch (type) {
-      case 'google_hybrid':
+      case 'satellite':
         return {
-          url: `https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}${keyParam}`,
-          subdomains: '0123',
-          maxZoom: 20,
-          attr: 'Map data © Google (Hybrid)',
-          isGoogle: true,
-        };
-      case 'google_satellite':
-        return {
-          url: `https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}${keyParam}`,
-          subdomains: '0123',
-          maxZoom: 20,
-          attr: 'Map data © Google (Satellite)',
-          isGoogle: true,
-        };
-      case 'google_terrain':
-        return {
-          url: `https://mt{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}${keyParam}`,
-          subdomains: '0123',
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          subdomains: 'abc',
           maxZoom: 18,
-          attr: 'Map data © Google (Terrain)',
-          isGoogle: true,
-        };
-      case 'google_roadmap':
-        return {
-          url: `https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}${keyParam}`,
-          subdomains: '0123',
-          maxZoom: 20,
-          attr: 'Map data © Google (Roadmap)',
-          isGoogle: true,
+          attr: 'Esri World Imagery (Satellite)',
+          isGoogle: false,
         };
       case 'tactical':
         return {
           url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
           subdomains: 'abc',
           maxZoom: 16,
-          attr: 'Esri Dark Canvas (Tactical)',
-          isGoogle: false,
-        };
-      case 'satellite':
-        return {
-          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-          subdomains: 'abc',
-          maxZoom: 18,
-          attr: 'Esri World Imagery (High-Res Terrain)',
+          attr: 'Esri Tactical Dark Canvas',
           isGoogle: false,
         };
       case 'topo':
@@ -246,7 +207,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
           url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
           subdomains: 'abc',
           maxZoom: 17,
-          attr: 'OpenTopoMap (Mountain Contours)',
+          attr: 'OpenTopoMap (Himalayan Topo)',
           isGoogle: false,
         };
       case 'osm':
@@ -254,7 +215,35 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
           url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           subdomains: 'abc',
           maxZoom: 19,
-          attr: 'OpenStreetMap Standard',
+          attr: 'OpenStreetMap (Valley Roadways)',
+          isGoogle: false,
+        };
+      case 'google_hybrid':
+      case 'google_satellite':
+      case 'google_terrain':
+      case 'google_roadmap':
+        if (!key) {
+          return {
+            url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            subdomains: 'abc',
+            maxZoom: 18,
+            attr: 'Esri World Imagery (Satellite)',
+            isGoogle: false,
+          };
+        }
+        return {
+          url: `https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}&key=${key}`,
+          subdomains: '0123',
+          maxZoom: 20,
+          attr: 'Google Maps Platform (Hybrid)',
+          isGoogle: true,
+        };
+      default:
+        return {
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          subdomains: 'abc',
+          maxZoom: 18,
+          attr: 'Esri World Imagery (Satellite)',
           isGoogle: false,
         };
     }
@@ -621,14 +610,25 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
     };
   }, [isExpanded]);
 
-  // Multi-stage Invalidate map size when expanded / restored
+  // Multi-stage Invalidate map size and ResizeObserver when expanded / restored
   useEffect(() => {
-    if (!mapInstanceRef.current) return;
+    if (!mapContainerRef.current || !mapInstanceRef.current) return;
     const map = mapInstanceRef.current;
+
+    // Trigger instant recalculation
+    map.invalidateSize();
+
+    const observer = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+    observer.observe(mapContainerRef.current);
+
     const t1 = setTimeout(() => map.invalidateSize(), 50);
-    const t2 = setTimeout(() => map.invalidateSize(), 180);
-    const t3 = setTimeout(() => map.invalidateSize(), 350);
+    const t2 = setTimeout(() => map.invalidateSize(), 150);
+    const t3 = setTimeout(() => map.invalidateSize(), 300);
+
     return () => {
+      observer.disconnect();
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
@@ -664,11 +664,9 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
     if (key) {
       localStorage.setItem('sensora_google_maps_api_key', key);
       setActiveBasemap('google_hybrid');
-      setBasemapCategory('google');
     } else {
       localStorage.removeItem('sensora_google_maps_api_key');
-      setActiveBasemap('tactical');
-      setBasemapCategory('tactical');
+      setActiveBasemap('satellite');
     }
   };
 
@@ -728,86 +726,27 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
             {googleApiKey && <CheckCircle2 className="w-3 h-3" />}
           </button>
 
-          {/* Basemap Category Switcher (Google Maps vs Open GIS) */}
+          {/* Direct 1-Click GIS Basemap Switcher */}
           <div className="flex items-center bg-[#0b1326] p-0.5 rounded-lg border border-[#222a3d]">
-            <button
-              onClick={() => {
-                setBasemapCategory('google');
-                setActiveBasemap('google_hybrid');
-              }}
-              className={`px-2 py-1 text-[10px] font-mono rounded transition-all cursor-pointer ${
-                basemapCategory === 'google'
-                  ? 'bg-[#06b6d4] text-[#000000] font-bold'
-                  : 'text-[#869397] hover:text-[#dae2fd]'
-              }`}
-            >
-              Google Maps
-            </button>
-            <button
-              onClick={() => {
-                setBasemapCategory('tactical');
-                setActiveBasemap('tactical');
-              }}
-              className={`px-2 py-1 text-[10px] font-mono rounded transition-all cursor-pointer ${
-                basemapCategory === 'tactical'
-                  ? 'bg-[#06b6d4] text-[#000000] font-bold'
-                  : 'text-[#869397] hover:text-[#dae2fd]'
-              }`}
-            >
-              Tactical / Topo
-            </button>
-          </div>
-
-          {/* Basemap Style Selection */}
-          <div className="flex items-center bg-[#0b1326] p-0.5 rounded-lg border border-[#222a3d]">
-            {basemapCategory === 'google'
-              ? (
-                  [
-                    { id: 'google_hybrid', label: 'Hybrid' },
-                    { id: 'google_satellite', label: 'Satellite' },
-                    { id: 'google_terrain', label: 'Terrain' },
-                    { id: 'google_roadmap', label: 'Roadmap' },
-                  ] as { id: BasemapType; label: string }[]
-                ).map((b) => (
-                  <button
-                    key={b.id}
-                    onClick={() => {
-                      setActiveBasemap(b.id);
-                      if (!googleApiKey) {
-                        setIsKeyModalOpen(true);
-                      }
-                    }}
-                    className={`px-2 py-1 text-[10px] font-mono font-medium rounded transition-all cursor-pointer ${
-                      activeBasemap === b.id
-                        ? 'bg-[#4cd7f6] text-[#000000] font-bold shadow-sm'
-                        : 'text-[#869397] hover:text-[#dae2fd]'
-                    }`}
-                    title={`Switch Google Maps mode to ${b.label}`}
-                  >
-                    {b.label}
-                  </button>
-                ))
-              : (
-                  [
-                    { id: 'tactical', label: 'Dark' },
-                    { id: 'satellite', label: 'Satellite' },
-                    { id: 'topo', label: 'Topo' },
-                    { id: 'osm', label: 'OSM' },
-                  ] as { id: BasemapType; label: string }[]
-                ).map((b) => (
-                  <button
-                    key={b.id}
-                    onClick={() => setActiveBasemap(b.id)}
-                    className={`px-2 py-1 text-[10px] font-mono font-medium rounded transition-all cursor-pointer ${
-                      activeBasemap === b.id
-                        ? 'bg-[#06b6d4] text-[#000000] font-bold shadow-sm'
-                        : 'text-[#869397] hover:text-[#dae2fd]'
-                    }`}
-                    title={`Switch basemap to ${b.label}`}
-                  >
-                    {b.label}
-                  </button>
-                ))}
+            {[
+              { id: 'satellite' as BasemapType, label: '🛰️ Satellite' },
+              { id: 'tactical' as BasemapType, label: '🌑 Tactical Dark' },
+              { id: 'topo' as BasemapType, label: '⛰️ Topo' },
+              { id: 'osm' as BasemapType, label: '🗺️ Streets' },
+            ].map((b) => (
+              <button
+                key={b.id}
+                onClick={() => setActiveBasemap(b.id)}
+                className={`px-2.5 py-1 text-[10px] font-mono font-medium rounded transition-all cursor-pointer ${
+                  activeBasemap === b.id
+                    ? 'bg-[#06b6d4] text-[#000000] font-bold shadow-md'
+                    : 'text-[#869397] hover:text-[#dae2fd]'
+                }`}
+                title={`Switch GIS layer to ${b.label}`}
+              >
+                {b.label}
+              </button>
+            ))}
           </div>
 
           {/* Overlays Toggles */}
@@ -896,12 +835,10 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
       </div>
 
       {/* Main Map Container */}
-      <div className={`relative ${isExpanded ? 'flex-1 w-full min-h-0 my-1.5' : ''}`}>
+      <div className={`relative w-full overflow-hidden rounded-xl border border-[#222a3d] shadow-inner ${isExpanded ? 'flex-1 min-h-[450px] my-1.5' : 'h-96'}`}>
         <div
           ref={mapContainerRef}
-          className={`w-full rounded-lg overflow-hidden border border-[#222a3d] relative z-0 shadow-inner transition-all duration-300 ${
-            isExpanded ? 'h-full min-h-[500px]' : 'h-84'
-          }`}
+          className="w-full h-full absolute inset-0 z-0 bg-[#070e1b]"
         />
 
         {/* Google Maps API Key Missing Prompt Overlay */}
