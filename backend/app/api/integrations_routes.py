@@ -104,6 +104,32 @@ def update_integration_config(req: UpdateConfigRequest):
     if req.mqtt_broker_host is not None:
         settings.MQTT_BROKER_HOST = req.mqtt_broker_host.strip()
 
+    # Persist updated values back into .env file
+    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env")
+    try:
+        with open(env_path, "w", encoding="utf-8") as f:
+            f.write(f"""# SENSORA Catchment Telemetry & Early Warning System - Nepal
+DATABASE_URL={settings.DATABASE_URL}
+TWILIO_ACCOUNT_SID={settings.TWILIO_ACCOUNT_SID or ''}
+TWILIO_AUTH_TOKEN={settings.TWILIO_AUTH_TOKEN or ''}
+TWILIO_FROM_NUMBER={settings.TWILIO_FROM_NUMBER or ''}
+EMERGENCY_DISPATCH_PHONE={settings.EMERGENCY_DISPATCH_PHONE or '+977-9800000000'}
+LORAWAN_APP_KEY={settings.LORAWAN_APP_KEY or ''}
+LORAWAN_API_KEY={settings.LORAWAN_API_KEY or ''}
+LORAWAN_WEBHOOK_SECRET={settings.LORAWAN_WEBHOOK_SECRET or ''}
+MQTT_BROKER_HOST={settings.MQTT_BROKER_HOST}
+MQTT_BROKER_PORT={settings.MQTT_BROKER_PORT}
+MQTT_USERNAME={settings.MQTT_USERNAME or ''}
+MQTT_PASSWORD={settings.MQTT_PASSWORD or ''}
+MQTT_TOPIC={settings.MQTT_TOPIC}
+GOOGLE_MAPS_API_KEY={settings.GOOGLE_MAPS_API_KEY or ''}
+OPENWEATHER_API_KEY={settings.OPENWEATHER_API_KEY or ''}
+SATELLITE_API_KEY={settings.SATELLITE_API_KEY or ''}
+GEMINI_API_KEY={settings.GEMINI_API_KEY or ''}
+""")
+    except Exception:
+        pass
+
     return {
         "status": "config_updated",
         "message": "API credentials updated in memory and active across all endpoints.",

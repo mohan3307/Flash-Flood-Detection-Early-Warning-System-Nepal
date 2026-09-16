@@ -335,7 +335,7 @@ class SimulationEngine:
         for hz in high_risk_zones:
             exists = any(a["zone_code"] == hz["zone_code"] for a in self.active_alerts)
             if not exists:
-                self.active_alerts.append({
+                alert = {
                     "id": f"ALT-{hz['zone_code']}-{self.tick_count}",
                     "timestamp": timestamp,
                     "zone_code": hz["zone_code"],
@@ -349,7 +349,21 @@ class SimulationEngine:
                     ),
                     "recommended_action": hz["recommended_action"],
                     "lead_time_minutes": round(self.lead_time_minutes, 1)
-                })
+                }
+                self.active_alerts.append(alert)
+
+                # Automatically trigger real-time Twilio SMS broadcast
+                try:
+                    from app.services.alert_service import alert_service
+                    alert_service.check_and_dispatch_emergency_broadcast(
+                        risk_level="HIGH",
+                        zone_name=hz["name"],
+                        headline=f"FLASH FLOOD WARNING: {hz['name']}",
+                        recommended_action=hz["recommended_action"],
+                        lead_time_minutes=int(self.lead_time_minutes)
+                    )
+                except Exception as e:
+                    print(f"[ALERT-SMS] Real-time broadcast notification error: {e}")
 
     def ingest_hardware_reading(
         self,
