@@ -10,6 +10,7 @@ import { SensorHealth } from './components/SensorHealth';
 import { ScenarioSimulator } from './components/ScenarioSimulator';
 import { MultiSensorChart } from './components/charts/MultiSensorChart';
 import { FloodRiskMap } from './components/map/FloodRiskMap';
+import { MenuBar } from './components/MenuBar';
 import { ModelPerformanceModal } from './components/ModelPerformanceModal';
 import { IntegrationsModal } from './components/integrations/IntegrationsModal';
 
@@ -114,6 +115,16 @@ export function App() {
         scenario={frame.scenario}
       />
 
+      {/* Standalone Tactical Menu Bar */}
+      <MenuBar
+        zones={frame.zones}
+        selectedZoneCode={selectedZoneCode}
+        onSelectZone={(code) => setSelectedZoneCode(code)}
+        onOpenPerformance={() => setIsPerformanceOpen(true)}
+        onOpenIntegrations={() => setIsIntegrationsOpen(true)}
+        activeAlertsCount={frame.alerts_count}
+      />
+
       {/* Main Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-5 lg:p-6 space-y-5">
         {/* Hackathon Judge Guided Stepper */}
@@ -129,8 +140,8 @@ export function App() {
           leadTimeMinutes={frame.lead_time_minutes}
         />
 
-        {/* Top Risk & Explainability Section (Equal Height Grid) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        {/* Overview: Top Risk & Explainability Section (Equal Height Grid) */}
+        <div id="overview-section" className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch scroll-mt-28">
           <div className="lg:col-span-7 flex flex-col">
             <RiskSummaryCard
               overallRisk={frame.overall_risk}
@@ -139,7 +150,7 @@ export function App() {
               scenario={frame.scenario}
             />
           </div>
-          <div className="lg:col-span-5 flex flex-col">
+          <div id="xai-section" className="lg:col-span-5 flex flex-col scroll-mt-28">
             <ExplainableAI primaryZone={activeZone} />
           </div>
         </div>
@@ -151,22 +162,28 @@ export function App() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           {/* Left Column (7 cols): Charts and Scenario Simulator */}
           <div className="lg:col-span-7 space-y-5">
-            <MultiSensorChart data={history} />
-            <ScenarioSimulator
-              currentScenario={frame.scenario}
-              speed={frame.speed}
-              isRunning={frame.is_running}
-            />
+            <div id="hydrograph-section" className="scroll-mt-28">
+              <MultiSensorChart data={history} />
+            </div>
+            <div id="simulator-section" className="scroll-mt-28">
+              <ScenarioSimulator
+                currentScenario={frame.scenario}
+                speed={frame.speed}
+                isRunning={frame.is_running}
+              />
+            </div>
           </div>
 
           {/* Right Column (5 cols): Interactive Map & False Alarm Reduction */}
           <div className="lg:col-span-5 space-y-5">
-            <FloodRiskMap
-              zones={frame.zones}
-              selectedZoneCode={selectedZoneCode}
-              onSelectZone={(code) => setSelectedZoneCode(code)}
-              scenario={frame.scenario}
-            />
+            <div id="gis-map-section" className="scroll-mt-28">
+              <FloodRiskMap
+                zones={frame.zones}
+                selectedZoneCode={selectedZoneCode}
+                onSelectZone={(code) => setSelectedZoneCode(code)}
+                scenario={frame.scenario}
+              />
+            </div>
             <FalseAlarmCard
               primaryZone={activeZone}
               scenario={frame.scenario}
@@ -175,7 +192,9 @@ export function App() {
         </div>
 
         {/* Sensor Health Monitoring */}
-        <SensorHealth zones={frame.zones} />
+        <div id="nodes-section" className="scroll-mt-28">
+          <SensorHealth zones={frame.zones} />
+        </div>
       </main>
 
       {/* Footer */}
