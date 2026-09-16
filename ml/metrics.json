@@ -1,0 +1,82 @@
+{
+  "prototype_disclaimer": "Metrics calculated on synthetic/simulated environmental scenarios for research and prototype demonstration.",
+  "accuracy": 99.96,
+  "precision": 99.96,
+  "recall": 99.96,
+  "f1_score": 99.96,
+  "false_alarm_rate": 0.78,
+  "warning_lead_time": {
+    "average_minutes": 259.2,
+    "best_minutes": 300,
+    "min_minutes": 210,
+    "episodes_evaluated": 12
+  },
+  "confusion_matrix": {
+    "classes": [
+      "HIGH",
+      "LOW",
+      "MEDIUM"
+    ],
+    "matrix": [
+      [
+        2471,
+        0,
+        2
+      ],
+      [
+        0,
+        4905,
+        1
+      ],
+      [
+        0,
+        2,
+        4619
+      ]
+    ]
+  },
+  "per_class_metrics": {
+    "HIGH": {
+      "precision": 100.0,
+      "recall": 99.92,
+      "f1_score": 99.96,
+      "support": 2473
+    },
+    "LOW": {
+      "precision": 99.96,
+      "recall": 99.98,
+      "f1_score": 99.97,
+      "support": 4906
+    },
+    "MEDIUM": {
+      "precision": 99.94,
+      "recall": 99.96,
+      "f1_score": 99.95,
+      "support": 4621
+    }
+  },
+  "feature_importances": {
+    "rainfall_intensity": 0.154,
+    "water_level": 0.364,
+    "rate_of_rise": 0.0262,
+    "rainfall_change": 0.0037,
+    "water_level_change": 0.0259,
+    "rolling_rainfall_3h": 0.2033,
+    "rolling_water_level_trend": 0.0375,
+    "temperature": 0.1855
+  },
+  "scenario_distribution": {
+    "heavy_rain": 4153,
+    "normal": 4127,
+    "flash_flood": 2369,
+    "recovery": 733,
+    "false_alarm": 618
+  },
+  "total_samples": 12000,
+  "scenarios_summary": {
+    "total_scenarios_evaluated": 12000,
+    "correct_warnings": 2471,
+    "missed_warnings": 2,
+    "false_warnings": 0
+  }
+}

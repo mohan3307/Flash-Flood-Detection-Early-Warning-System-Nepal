@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SENSORA // COMMAND MATRIX - Himalayan Early Warning Network</title>
+<!-- Material Symbols & Specialized Typography -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Official Configuration Plugin -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary": "#003640",
+            "on-secondary-container": "#ffaea8",
+            "surface-tint": "#4cd7f6",
+            "tertiary": "#ffb95f",
+            "tertiary-container": "#e79400",
+            "tertiary-fixed-dim": "#ffb95f",
+            "secondary": "#ffb3ad",
+            "surface-container-lowest": "#060e20",
+            "surface-container-highest": "#2d3449",
+            "secondary-fixed": "#ffdad7",
+            "on-tertiary-container": "#563400",
+            "surface-container-high": "#222a3d",
+            "on-primary-fixed": "#001f26",
+            "secondary-container": "#a40217",
+            "on-primary-container": "#00424f",
+            "on-background": "#dae2fd",
+            "on-primary-fixed-variant": "#004e5c",
+            "outline-variant": "#3d494c",
+            "inverse-primary": "#00687a",
+            "on-tertiary": "#472a00",
+            "secondary-fixed-dim": "#ffb3ad",
+            "primary": "#4cd7f6",
+            "primary-container": "#06b6d4",
+            "surface-container": "#171f33",
+            "on-surface-variant": "#bcc9cd",
+            "tertiary-fixed": "#ffddb8",
+            "on-error": "#690005",
+            "on-surface": "#dae2fd",
+            "error-container": "#93000a",
+            "on-secondary": "#68000a",
+            "on-secondary-fixed": "#410004",
+            "surface-container-low": "#131b2e",
+            "outline": "#869397",
+            "inverse-on-surface": "#283044",
+            "on-error-container": "#ffdad6",
+            "on-secondary-fixed-variant": "#930013",
+            "on-tertiary-fixed-variant": "#653e00",
+            "background": "#0b1326",
+            "on-tertiary-fixed": "#2a1700",
+            "primary-fixed": "#acedff",
+            "inverse-surface": "#dae2fd",
+            "surface-bright": "#31394d",
+            "primary-fixed-dim": "#4cd7f6",
+            "surface-variant": "#2d3449",
+            "error": "#ffb4ab",
+            "surface": "#0b1326",
+            "surface-dim": "#0b1326"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-lg": "1.25rem",
+            "gutter": "0.75rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-md": "0.75rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "headline-xl-mobile": ["Space Grotesk"],
+            "headline-md": ["Space Grotesk"],
+            "headline-lg": ["Space Grotesk"],
+            "body-md": ["Inter"],
+            "body-sm": ["Inter"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "headline-sm": ["Space Grotesk"],
+            "headline-xl": ["Space Grotesk"],
+            "body-lg": ["Inter"],
+            "label-md": ["JetBrains Mono"],
+            "label-sm": ["JetBrains Mono"],
+            "label-lg": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "headline-xl-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "26px", "fontWeight": "600" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-lg-mobile": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "500" }],
+            "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+            "label-lg": ["13px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Material Symbols base styling */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+      vertical-align: middle;
+    }
+    
+    /* HUD Grid and Tactical Patterns */
+    .hud-grid-pattern {
+      background-image: radial-gradient(rgba(76, 215, 246, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .hud-crosshair-pattern {
+      background-image: 
+        linear-gradient(rgba(61, 73, 76, 0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(61, 73, 76, 0.25) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    
+    /* Hazard Striping */
+    .hazard-stripe {
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(164, 2, 23, 0.8),
+        rgba(164, 2, 23, 0.8) 12px,
+        rgba(147, 0, 10, 0.95) 12px,
+        rgba(147, 0, 10, 0.95) 24px
+      );
+    }
+    
+    /* Custom Pulse Animations */
+    @keyframes tacticalPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.15); }
+    }
+    .pulse-tactical {
+      animation: tacticalPulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes alertGlow {
+      0%, 100% { box-shadow: 0 0 16px -2px rgba(239, 68, 68, 0.6); }
+      50% { box-shadow: 0 0 28px 2px rgba(239, 68, 68, 0.85); }
+    }
+    .alert-glow-active {
+      animation: alertGlow 1.5s infinite alternate;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col selection:bg-primary selection:text-on-primary antialiased">
+<!-- ===================================================================== -->
+<!-- 1. STICKY HEADER (Shared Component JSON Blueprint)                  -->
+<!-- ===================================================================== -->
+<header class="bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/40 flex justify-between items-center w-full px-margin h-14 sticky top-0 z-50 transition-all duration-150">
+<!-- Left: Brand Anchor & Catchment Node Identifier -->
+<div class="flex items-center space-x-space-md">
+<div class="flex items-center space-x-space-xs">
+<span class="relative flex h-3 w-3 items-center justify-center">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="text-headline-sm font-headline-sm tracking-wider uppercase text-primary">
+          SENSORA // COMMAND MATRIX
+        </span>
+</div>
+<div class="hidden xl:flex items-center border-l border-outline-variant/40 pl-space-md">
+<span class="text-label-sm font-label-sm text-on-surface-variant">
+          Himalayan Catchment Telemetry // Sindhupalchok Node 01-04
+        </span>
+</div>
+</div>
+<!-- Center: Navigation Links from Shared Components JSON -->
+<nav class="hidden lg:flex items-center space-x-space-lg">
+<a class="text-primary border-b-2 border-primary pb-1 font-semibold text-label-md font-label-md transition-colors duration-150" href="#telemetry">
+        Telemetry
+      </a>
+<a class="text-on-surface-variant font-medium text-label-md font-label-md hover:text-primary transition-colors duration-150" href="#catchment-gis">
+        Catchment GIS
+      </a>
+<a class="text-on-surface-variant font-medium text-label-md font-label-md hover:text-primary transition-colors duration-150" href="#predictive-xai">
+        Predictive XAI
+      </a>
+<a class="text-on-surface-variant font-medium text-label-md font-label-md hover:text-primary transition-colors duration-150" href="#incident-log">
+        Incident Log
+      </a>
+</nav>
+<!-- Right: Real-time Status Badges & SOP Action Controls -->
+<div class="flex items-center space-x-space-sm">
+<!-- Telemetry Status Pills -->
+<div class="hidden 2xl:flex items-center space-x-space-xs">
+<div class="flex items-center space-x-1.5 px-2.5 py-1 bg-surface-container-low border border-primary/30 rounded">
+<span class="h-2 w-2 rounded-full bg-surface-tint"></span>
+<span class="text-label-sm font-label-sm text-primary">Active Nodes: 4/4 Online</span>
+</div>
+<div class="flex items-center space-x-1.5 px-2.5 py-1 bg-secondary-container/40 border border-secondary rounded">
+<span class="h-2 w-2 rounded-full bg-secondary pulse-tactical"></span>
+<span class="text-label-sm font-label-sm text-secondary-fixed">1 Active Warning (Zone B)</span>
+</div>
+<div class="px-2 py-1 bg-surface-container text-label-sm font-label-sm text-on-surface-variant border border-outline-variant/50 rounded">
+<span class="material-symbols-outlined text-[14px] mr-1 text-outline">schedule</span>
+<span>14:48:22 NPT (UTC+5:45)</span>
+</div>
+</div>
+<!-- Trailing Action Icons from JSON -->
+<div class="flex items-center space-x-1 text-on-surface-variant border-x border-outline-variant/40 px-2">
+<button class="p-1.5 hover:text-primary transition-colors" title="Radar Scan Stream">
+<span class="material-symbols-outlined" data-icon="radar">radar</span>
+</button>
+<button class="p-1.5 hover:text-primary transition-colors" title="Hardware Sensor Grid">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+</button>
+<button class="p-1.5 hover:text-secondary transition-colors relative" title="Crisis Alert Engine">
+<span class="material-symbols-outlined text-secondary" data-icon="crisis_alert" data-weight="fill" style="font-variation-settings: 'FILL' 1;">crisis_alert</span>
+<span class="absolute top-1 right-1 h-1.5 w-1.5 bg-secondary rounded-full"></span>
+</button>
+<button class="p-1.5 hover:text-primary transition-colors" title="Settings &amp; Parameters">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<!-- Trailing Actions (JSON exact strings) -->
+<div class="flex items-center space-x-space-xs">
+<button class="px-2.5 py-1 text-label-sm font-label-sm bg-surface-container border border-outline hover:border-primary text-on-surface flex items-center space-x-1 rounded transition-colors" id="sirenBtn" onclick="toggleSiren()">
+<span class="material-symbols-outlined text-[14px] text-tertiary" data-icon="volume_up">volume_up</span>
+<span id="sirenLabel">Siren: ARMED</span>
+</button>
+<button class="px-3 py-1 text-label-sm font-label-sm bg-surface-container-high text-primary border border-primary/40 hover:bg-primary hover:text-on-primary rounded transition-all active:scale-95">
+          ACKNOWLEDGE ADVISORY
+        </button>
+<button class="px-3 py-1 text-label-sm font-label-sm bg-secondary-container text-on-secondary-container hover:bg-secondary hover:text-on-secondary border border-secondary font-bold tracking-wider rounded transition-all active:scale-95 alert-glow-active">
+          TRIGGER DEFENSE SOP
+        </button>
+</div>
+</div>
+</header>
+<!-- ===================================================================== -->
+<!-- 2. HACKATHON DEMO WORKFLOW BAR (Interactive Scenario Stepper)       -->
+<!-- ===================================================================== -->
+<section class="w-full bg-surface-container-low border-b border-outline-variant/40 px-margin py-2.5">
+<div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3">
+<!-- Stepper Controls & Hotkeys -->
+<div class="flex items-center space-x-2 shrink-0">
+<div class="px-2 py-0.5 bg-surface-container border border-outline-variant/60 rounded text-label-sm font-label-sm text-primary uppercase">
+          Demo Workflow Engine
+        </div>
+<button class="p-1 bg-surface-container-high hover:bg-surface-bright text-on-surface rounded border border-outline-variant/40 transition-colors" onclick="prevStep()" title="Previous Scenario">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="px-2.5 py-1 bg-primary-container text-on-primary-container hover:bg-primary rounded text-label-sm font-label-sm font-semibold flex items-center space-x-1 transition-colors" onclick="nextStep()" title="Advance Scenario Step">
+<span>Advance Step</span>
+<span class="text-[10px] bg-on-primary-container/20 px-1 py-0.2 rounded font-label-sm">SPACE</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="px-2 py-1 bg-surface-container text-on-surface-variant hover:text-on-surface rounded border border-outline-variant/40 text-label-sm font-label-sm flex items-center space-x-1" id="autoCycleBtn" onclick="toggleAutoCycle()">
+<span class="material-symbols-outlined text-[13px]" data-icon="autorenew">autorenew</span>
+<span>Auto-Cycle: OFF</span>
+</button>
+</div>
+<!-- 6-Step Horizontal Pipeline -->
+<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2 w-full">
+<!-- Step 1: Completed -->
+<div class="flex items-center space-x-2 p-1.5 rounded bg-surface-container/60 border border-outline-variant/30 opacity-75">
+<span class="h-4 w-4 rounded-full bg-surface-tint text-on-primary flex items-center justify-center text-[10px] font-bold">✓</span>
+<div class="truncate">
+<p class="text-label-sm font-label-sm font-semibold text-on-surface truncate">1. Baseline Normal</p>
+<p class="text-[9px] font-label-sm text-on-surface-variant truncate">Stage 1.1m // &lt;10mm rain</p>
+</div>
+</div>
+<!-- Step 2: Completed -->
+<div class="flex items-center space-x-2 p-1.5 rounded bg-surface-container/60 border border-outline-variant/30 opacity-75">
+<span class="h-4 w-4 rounded-full bg-surface-tint text-on-primary flex items-center justify-center text-[10px] font-bold">✓</span>
+<div class="truncate">
+<p class="text-label-sm font-label-sm font-semibold text-on-surface truncate">2. Heavy Monsoon</p>
+<p class="text-[9px] font-label-sm text-on-surface-variant truncate">Stage 2.8m // Med Risk</p>
+</div>
+</div>
+<!-- Step 3: Active Running (Hazard State) -->
+<div class="flex items-center space-x-2 p-1.5 rounded bg-secondary-container/30 border border-secondary ring-1 ring-secondary/50 relative overflow-hidden">
+<span class="h-4 w-4 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-[10px] font-bold animate-pulse">●</span>
+<div class="truncate">
+<div class="flex items-center space-x-1">
+<p class="text-label-sm font-label-sm font-bold text-secondary truncate">3. Cloudburst</p>
+<span class="px-1 bg-secondary text-[8px] font-bold text-on-secondary rounded uppercase">LIVE</span>
+</div>
+<p class="text-[9px] font-label-sm text-secondary-fixed truncate">+0.41m/hr surge &gt; HIGH</p>
+</div>
+</div>
+<!-- Step 4: Pending -->
+<div class="flex items-center space-x-2 p-1.5 rounded bg-surface-container-low border border-outline-variant/20">
+<span class="h-4 w-4 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center text-[10px]">4</span>
+<div class="truncate">
+<p class="text-label-sm font-label-sm font-semibold text-on-surface-variant truncate">4. Emergency SOP</p>
+<p class="text-[9px] font-label-sm text-outline truncate">Siren + Geo-Evac 45m</p>
+</div>
+</div>
+<!-- Step 5: Pending -->
+<div class="flex items-center space-x-2 p-1.5 rounded bg-surface-container-low border border-outline-variant/20">
+<span class="h-4 w-4 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center text-[10px]">5</span>
+<div class="truncate">
+<p class="text-label-sm font-label-sm font-semibold text-on-surface-variant truncate">5. False Rejection</p>
+<p class="text-[9px] font-label-sm text-outline truncate">95mm rain, zero rise test</p>
+</div>
+</div>
+<!-- Step 6: Pending -->
+<div class="flex items-center space-x-2 p-1.5 rounded bg-surface-container-low border border-outline-variant/20">
+<span class="h-4 w-4 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center text-[10px]">6</span>
+<div class="truncate">
+<p class="text-label-sm font-label-sm font-semibold text-on-surface-variant truncate">6. ML Evaluation</p>
+<p class="text-[9px] font-label-sm text-outline truncate">96.8% Acc // 1.8% False</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 3. EMERGENCY FLASH FLOOD ALERT BANNER (Mission-Critical Tier 1)     -->
+<!-- ===================================================================== -->
+<section class="px-margin pt-space-md">
+<div class="bg-secondary-container/20 border-2 border-secondary rounded-lg shadow-[0_0_25px_rgba(164,2,23,0.35)] overflow-hidden relative">
+<!-- Hazard Perimeter Top Strip -->
+<div class="h-1.5 w-full hazard-stripe"></div>
+<div class="p-space-md grid grid-cols-1 lg:grid-cols-12 gap-space-md items-center">
+<!-- Left Banner Notice & Trigger Cause (7 Cols) -->
+<div class="lg:col-span-7 space-y-space-xs">
+<div class="flex flex-wrap items-center gap-2">
+<span class="px-2 py-0.5 bg-secondary text-on-secondary font-headline-sm text-label-sm uppercase rounded font-bold tracking-wider flex items-center space-x-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="crisis_alert" data-weight="fill" style="font-variation-settings: 'FILL' 1;">crisis_alert</span>
+<span>DEFENSE LEVEL 4</span>
+</span>
+<span class="text-headline-sm font-headline-sm text-secondary tracking-tight">
+              CRITICAL FLASH FLOOD WARNING: Melamchi Pul Bazaar (Zone B)
+            </span>
+<div class="px-2.5 py-0.5 bg-secondary-container text-on-secondary-container border border-secondary rounded-full text-label-sm font-label-sm flex items-center space-x-1 font-bold">
+<span class="material-symbols-outlined text-[13px] text-tertiary" data-icon="timer">timer</span>
+<span>~44:18 PEAK CREST LEAD TIME</span>
+</div>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface">Trigger Vector:</strong> Flash cloudburst registered at Upper Helambu Gorge station 
+            (<span class="text-secondary font-label-md">82.4 mm/hr</span> intensity) coupled with violent hydrological river stage surge velocity 
+            (<span class="text-secondary font-label-md">+0.41 m/hr</span> over 20-minute moving window). High-debris mudflow risk confirmed.
+          </p>
+<div class="flex items-center space-x-space-md pt-1 text-label-sm font-label-sm text-outline">
+<span>Lat: 27.8341° N</span>
+<span>•</span>
+<span>Lon: 85.5812° E</span>
+<span>•</span>
+<span>Elevation: 840m ASL</span>
+<span>•</span>
+<span class="text-tertiary">Catchment Saturation: 94.2%</span>
+</div>
+</div>
+<!-- Right: Standard Operating Procedure (SOP) Checklist (5 Cols) -->
+<div class="lg:col-span-5 bg-surface-container-lowest/80 p-space-sm rounded border border-outline-variant/50">
+<div class="flex justify-between items-center mb-2 border-b border-outline-variant/40 pb-1.5">
+<span class="text-label-sm font-label-sm text-primary uppercase font-bold tracking-wider flex items-center space-x-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="checklist">checklist</span>
+<span>Autonomous Defense SOP Checklist</span>
+</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">2/4 EXECUTED</span>
+</div>
+<div class="space-y-1.5 text-label-sm font-label-sm">
+<div class="flex items-center justify-between text-on-surface bg-surface-container-low/50 px-2 py-1 rounded">
+<div class="flex items-center space-x-2">
+<span class="text-surface-tint font-bold">✓</span>
+<span>SMS Geofence Broadcast (24,800 triggered)</span>
+</div>
+<span class="text-[9px] text-surface-tint font-label-sm">DISPATCHED</span>
+</div>
+<div class="flex items-center justify-between text-on-surface bg-surface-container-low/50 px-2 py-1 rounded">
+<div class="flex items-center space-x-2">
+<span class="text-surface-tint font-bold">✓</span>
+<span>Municipal Siren Tower Melamchi Armed &amp; Active</span>
+</div>
+<span class="text-[9px] text-surface-tint font-label-sm">110dB LIVE</span>
+</div>
+<div class="flex items-center justify-between text-secondary bg-secondary-container/20 px-2 py-1 rounded border border-secondary/40">
+<div class="flex items-center space-x-2">
+<span class="h-2 w-2 rounded-full bg-secondary pulse-tactical"></span>
+<span class="font-semibold">Riverside Settlement Evacuation (Pul Bazaar)</span>
+</div>
+<span class="text-[9px] bg-secondary text-on-secondary px-1 rounded font-bold">IN PROGRESS</span>
+</div>
+<div class="flex items-center justify-between text-outline bg-surface-container-low/30 px-2 py-1 rounded">
+<div class="flex items-center space-x-2">
+<span class="text-outline font-label-sm">[ ]</span>
+<span>Hydropower Dam Inflow Gate Clearance Protocol</span>
+</div>
+<button class="text-[9px] px-1.5 py-0.5 bg-surface-container-highest hover:bg-surface-bright text-on-surface rounded border border-outline-variant">EXECUTE</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 4. REAL-TIME TELEMETRY METRIC CARDS (5-Column Tactical Grid)        -->
+<!-- ===================================================================== -->
+<section class="px-margin pt-space-md" id="telemetry">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-space-sm">
+<!-- Metric 1: Rainfall Intensity -->
+<div class="bg-surface-container-low border border-outline-variant/40 rounded p-space-sm relative overflow-hidden">
+<div class="flex justify-between items-start">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">Rainfall Intensity</span>
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="rainy">rainy</span>
+</div>
+<div class="mt-2 flex items-baseline space-x-2">
+<span class="text-headline-lg font-headline-lg text-primary font-bold">84.2</span>
+<span class="text-label-md font-label-md text-on-surface-variant">mm/hr</span>
+</div>
+<div class="mt-1 flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-secondary font-semibold">Torr. Cloudburst // L4</span>
+<span class="text-secondary flex items-center">
+<span class="material-symbols-outlined text-[12px]" data-icon="trending_up">trending_up</span>
+            +18% 10m
+          </span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-secondary h-full" style="width: 86%;"></div>
+</div>
+</div>
+<!-- Metric 2: Water Level Stage -->
+<div class="bg-surface-container-low border border-secondary/60 rounded p-space-sm relative overflow-hidden bg-secondary-container/10">
+<div class="flex justify-between items-start">
+<span class="text-label-sm font-label-sm text-secondary-fixed uppercase font-semibold">River Stage Height</span>
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="water">water</span>
+</div>
+<div class="mt-2 flex items-baseline space-x-2">
+<span class="text-headline-lg font-headline-lg text-secondary font-bold">4.15</span>
+<span class="text-label-md font-label-md text-secondary-fixed">meters</span>
+</div>
+<div class="mt-1 flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-secondary">Bankfull Threshold: 4.20m</span>
+<span class="text-secondary font-bold">98.8%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-secondary h-full animate-pulse" style="width: 98.8%;"></div>
+</div>
+</div>
+<!-- Metric 3: Rate of Rise Surge Velocity -->
+<div class="bg-surface-container-low border border-outline-variant/40 rounded p-space-sm relative overflow-hidden">
+<div class="flex justify-between items-start">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">Surge Rate of Rise</span>
+<span class="material-symbols-outlined text-tertiary text-[18px]" data-icon="speed">speed</span>
+</div>
+<div class="mt-2 flex items-baseline space-x-2">
+<span class="text-headline-lg font-headline-lg text-tertiary font-bold">+0.42</span>
+<span class="text-label-md font-label-md text-on-surface-variant">m/hr</span>
+</div>
+<div class="mt-1 flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-tertiary">Critical (&gt;0.35 m/hr)</span>
+<span class="px-1.5 bg-tertiary-container text-on-tertiary-container rounded text-[9px] font-bold">SURGE ACTIVE</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-tertiary h-full" style="width: 92%;"></div>
+</div>
+</div>
+<!-- Metric 4: Basin Barometrics -->
+<div class="bg-surface-container-low border border-outline-variant/40 rounded p-space-sm relative overflow-hidden">
+<div class="flex justify-between items-start">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">Basin Ambience &amp; P</span>
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="thermostat">thermostat</span>
+</div>
+<div class="mt-2 flex items-baseline space-x-2">
+<span class="text-headline-lg font-headline-lg text-on-surface font-bold">16.8°C</span>
+<span class="text-label-md font-label-md text-on-surface-variant">784 hPa</span>
+</div>
+<div class="mt-1 flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-on-surface-variant">Dew Point 16.2°C // 97% RH</span>
+<span class="text-primary text-[10px]">Orographic Lift</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary h-full" style="width: 74%;"></div>
+</div>
+</div>
+<!-- Metric 5: Gateway & Mesh Health -->
+<div class="bg-surface-container-low border border-outline-variant/40 rounded p-space-sm relative overflow-hidden">
+<div class="flex justify-between items-start">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">LoRaWAN Mesh Uplink</span>
+<span class="material-symbols-outlined text-surface-tint text-[18px]" data-icon="cell_tower">cell_tower</span>
+</div>
+<div class="mt-2 flex items-baseline space-x-2">
+<span class="text-headline-lg font-headline-lg text-surface-tint font-bold">98.4%</span>
+<span class="text-label-md font-label-md text-on-surface-variant">Nominal</span>
+</div>
+<div class="mt-1 flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-on-surface-variant">4 Nodes // SF7 // Latency 1.2s</span>
+<span class="text-surface-tint text-[10px]">Batt 94% Avg</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-surface-tint h-full" style="width: 98.4%;"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 5. PRIMARY RISK & TELEMETRY OVERVIEW (60% / 40% Bento Layout)        -->
+<!-- ===================================================================== -->
+<section class="px-margin pt-space-md" id="predictive-xai">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<!-- Left Column (60% / 7-8 Cols): Large Flood Risk Gauge & Dynamics -->
+<div class="lg:col-span-7 bg-surface-container-low border border-outline-variant/40 rounded-lg p-space-md relative overflow-hidden hud-grid-pattern">
+<!-- Header HUD Bar -->
+<div class="flex justify-between items-center border-b border-outline-variant/40 pb-space-sm mb-space-md">
+<div class="flex items-center space-x-2">
+<span class="h-2.5 w-2.5 bg-secondary rounded-full pulse-tactical"></span>
+<span class="text-label-md font-label-md text-primary tracking-wider uppercase font-semibold">
+              Flash Flood Dynamic Risk Engine // XGBoost + LSTM Hydrological Ensemble
+            </span>
+</div>
+<span class="text-label-sm font-label-sm px-2 py-0.5 bg-secondary-container text-on-secondary-container border border-secondary rounded font-bold">
+            CONFIDENCE: 94.6%
+          </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-md items-center">
+<!-- Tactical Circular Dial Simulation (SVG) -->
+<div class="md:col-span-5 flex flex-col items-center justify-center p-space-sm">
+<div class="relative w-48 h-48 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<!-- Background track -->
+<circle cx="50" cy="50" fill="transparent" r="42" stroke="rgba(45, 52, 73, 0.6)" stroke-width="8"></circle>
+<!-- Safe Level (Green) -->
+<circle cx="50" cy="50" fill="transparent" r="42" stroke="#4cd7f6" stroke-dasharray="264" stroke-dashoffset="180" stroke-width="8"></circle>
+<!-- Amber Section -->
+<circle cx="50" cy="50" fill="transparent" r="42" stroke="#ffb95f" stroke-dasharray="264" stroke-dashoffset="120" stroke-width="8"></circle>
+<!-- Crimson Hazard Active -->
+<circle class="animate-pulse" cx="50" cy="50" fill="transparent" r="42" stroke="#ffb3ad" stroke-dasharray="264" stroke-dashoffset="35" stroke-width="10"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="text-label-sm font-label-sm text-outline uppercase tracking-widest">Calculated Risk</span>
+<span class="text-headline-xl font-headline-xl text-secondary font-bold tracking-tight">92<span class="text-headline-md font-headline-md">%</span></span>
+<span class="text-[10px] font-label-sm text-secondary uppercase tracking-wider font-bold">LEVEL 4 HIGH</span>
+</div>
+</div>
+<div class="mt-2 text-center">
+<p class="text-label-sm font-label-sm text-on-surface-variant">Calculated Crest Peak Lead:</p>
+<p class="text-headline-sm font-headline-sm text-tertiary font-bold font-label-md">15:32 NPT (+44 MINS)</p>
+</div>
+</div>
+<!-- Dynamic Projections & Forecast Matrix -->
+<div class="md:col-span-7 space-y-3">
+<div class="bg-surface-container p-space-sm rounded border border-outline-variant/50">
+<div class="flex justify-between items-center">
+<span class="text-label-sm font-label-sm text-outline">CURRENT WATER LEVEL</span>
+<span class="text-label-sm font-label-sm text-secondary font-bold">4.15m (Stage)</span>
+</div>
+<div class="mt-1 text-headline-sm font-headline-sm text-on-surface font-semibold">
+                Projected Crest: <span class="text-secondary">5.82m</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">
+                Breaches municipal critical bankfull (4.20m) by <strong class="text-secondary">+1.62 meters</strong>. Inundation model predicts lower bazaar submerged up to first storey floor within 50 minutes.
+              </p>
+</div>
+<div class="grid grid-cols-2 gap-2 text-label-sm font-label-sm">
+<div class="p-2 bg-surface-container-lowest rounded border border-outline-variant/30">
+<span class="text-outline block text-[9px]">MOMENTUM VECTOR</span>
+<div class="flex items-center space-x-1 mt-0.5 text-secondary font-bold">
+<span class="material-symbols-outlined text-[16px]" data-icon="north_east">north_east</span>
+<span>RAPIDLY RISING</span>
+</div>
+<span class="text-[10px] text-on-surface-variant">+0.42 m/hr surge delta</span>
+</div>
+<div class="p-2 bg-surface-container-lowest rounded border border-outline-variant/30">
+<span class="text-outline block text-[9px]">CIVIL PROTECTION ACTION</span>
+<div class="flex items-center space-x-1 mt-0.5 text-secondary font-bold">
+<span class="material-symbols-outlined text-[16px]" data-icon="warning">warning</span>
+<span>RED EVACUATION</span>
+</div>
+<span class="text-[10px] text-on-surface-variant">Zone B Immediate Clear</span>
+</div>
+</div>
+<!-- Model Details Footnote -->
+<div class="flex items-center justify-between text-[10px] font-label-sm text-outline pt-1">
+<span>Model: Hybrid XGBoost+BiLSTM v3.8</span>
+<span>Inference Time: 42ms</span>
+<span class="text-primary cursor-pointer hover:underline">View Confusion Matrix ↗</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column (40% / 5 Cols): Explainable AI (XAI) Attribution Card -->
+<div class="lg:col-span-5 bg-surface-container-low border border-outline-variant/40 rounded-lg p-space-md flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-center border-b border-outline-variant/40 pb-space-sm mb-space-md">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="psychology">psychology</span>
+<span class="text-label-md font-label-md text-on-surface uppercase font-bold">
+                Explainable AI (XAI) Feature Attribution
+              </span>
+</div>
+<span class="text-label-sm font-label-sm text-outline">SHAP TreeExplainer</span>
+</div>
+<!-- Feature Attribution Bars -->
+<div class="space-y-3">
+<!-- Factor 1 -->
+<div>
+<div class="flex justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface">Rate of Rise Surge Velocity (+0.42 m/hr)</span>
+<span class="text-secondary font-bold">+38% Impact</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full" style="width: 38%;"></div>
+</div>
+</div>
+<!-- Factor 2 -->
+<div>
+<div class="flex justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface">Rainfall Cloudburst (Helambu 82.4 mm/hr)</span>
+<span class="text-secondary font-bold">+31% Impact</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-secondary/80 h-full" style="width: 31%;"></div>
+</div>
+</div>
+<!-- Factor 3 -->
+<div>
+<div class="flex justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface">Water Level Stage (Pul Bazaar 4.15m)</span>
+<span class="text-tertiary font-bold">+21% Impact</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full" style="width: 21%;"></div>
+</div>
+</div>
+<!-- Factor 4 -->
+<div>
+<div class="flex justify-between text-label-sm font-label-sm mb-1">
+<span class="text-on-surface">3-Hour Cumulative Catchment Saturation</span>
+<span class="text-surface-tint font-bold">+10% Impact</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-surface-tint h-full" style="width: 10%;"></div>
+</div>
+</div>
+</div>
+<!-- Hydrological Drivers Explanatory Narrative -->
+<div class="mt-4 p-space-sm bg-surface-container-lowest rounded border border-outline-variant/30 space-y-1.5">
+<span class="text-label-sm font-label-sm text-primary uppercase font-bold tracking-wider block">
+              Identified Hydrological Drivers:
+            </span>
+<ul class="text-body-sm font-body-sm text-on-surface-variant space-y-1 text-xs">
+<li class="flex items-start space-x-1.5">
+<span class="text-primary font-bold">•</span>
+<span><strong>Saturated Soil Antecedent:</strong> Soil moisture index at 94.2% eliminates basin infiltration capacity.</span>
+</li>
+<li class="flex items-start space-x-1.5">
+<span class="text-primary font-bold">•</span>
+<span><strong>Gorge Channeling Wave:</strong> Melamchi narrow corridor accelerates flow velocity to 4.2 m/s downstream.</span>
+</li>
+<li class="flex items-start space-x-1.5">
+<span class="text-surface-tint font-bold">•</span>
+<span><strong>Cross-Node Corroboration:</strong> Node 01 upstream acoustic surge confirms legitimate hydraulic wave.</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="pt-2 text-right">
+<button class="text-label-sm font-label-sm text-primary hover:text-surface-tint flex items-center justify-end space-x-1 ml-auto">
+<span>Export Full Telemetry SHAP Diagnostics</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 6. INTERACTIVE TIME-SERIES & SCENARIO SIMULATOR (Split Layout)      -->
+<!-- ===================================================================== -->
+<section class="px-margin pt-space-md" id="catchment-gis">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<!-- Left Pane (7 Cols): Synchronized Telemetry Chart & Interactive Simulator -->
+<div class="lg:col-span-7 bg-surface-container-low border border-outline-variant/40 rounded-lg p-space-md flex flex-col justify-between">
+<!-- Chart Controls Header -->
+<div>
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-outline-variant/40 pb-space-sm mb-space-sm">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="timeline">timeline</span>
+<span class="text-label-md font-label-md text-on-surface uppercase font-bold">
+                Hydrological Telemetry &amp; AI Flood Prediction Waveform
+              </span>
+</div>
+<div class="flex items-center space-x-1 bg-surface-container p-0.5 rounded border border-outline-variant/30 text-label-sm font-label-sm">
+<button class="px-2 py-0.5 text-on-surface-variant hover:text-on-surface">10m</button>
+<button class="px-2 py-0.5 text-on-surface-variant hover:text-on-surface">30m</button>
+<button class="px-2 py-0.5 bg-primary-container text-on-primary-container font-semibold rounded">1h</button>
+<button class="px-2 py-0.5 text-on-surface-variant hover:text-on-surface">3h</button>
+<button class="px-2 py-0.5 text-secondary flex items-center space-x-1">
+<span class="h-1.5 w-1.5 rounded-full bg-secondary pulse-tactical"></span>
+<span>Real-Time</span>
+</button>
+</div>
+</div>
+<!-- Synchronized SVG Multi-Series Hydrological Chart -->
+<div class="relative w-full h-64 bg-surface-container-lowest/90 rounded border border-outline-variant/30 p-2 overflow-hidden hud-crosshair-pattern">
+<!-- Threshold Guides -->
+<div class="absolute inset-x-2 top-8 border-b border-secondary/60 border-dashed flex justify-between items-center text-[9px] font-label-sm text-secondary z-10 px-2">
+<span>CRITICAL BANKFULL BREACH (4.20m)</span>
+<span>THRESHOLD OVERFLOW</span>
+</div>
+<div class="absolute inset-x-2 top-24 border-b border-tertiary/50 border-dashed flex justify-between items-center text-[9px] font-label-sm text-tertiary z-10 px-2">
+<span>MUNICIPAL ADVISORY STAGE (3.50m)</span>
+<span>EARLY ALERT ZONE</span>
+</div>
+<!-- Telemetry Lines -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 600 240">
+<defs>
+<lineargradient id="riskGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#ffb3ad" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="#ffb3ad" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- AI Risk Probability Area Fill -->
+<polygon fill="url(#riskGrad)" points="40,220 40,200 120,195 200,190 280,165 360,110 440,55 520,35 580,25 580,220"></polygon>
+<!-- River Stage Line (Gold/Red) -->
+<polyline fill="none" points="40,195 120,190 200,185 280,160 360,105 440,65 520,42 580,38" stroke="#ffb3ad" stroke-width="3"></polyline>
+<!-- Forecast projection dashed continuation -->
+<polyline fill="none" points="520,42 580,20 600,12" stroke="#ffb3ad" stroke-dasharray="4" stroke-width="2"></polyline>
+<!-- Rainfall Intensity Line (Cyan) -->
+<polyline fill="none" points="40,210 120,205 200,195 280,130 360,45 440,30 520,60 580,110" stroke="#4cd7f6" stroke-dasharray="2" stroke-width="2"></polyline>
+<!-- Live Beacon Nodes on SVG -->
+<circle class="animate-ping" cx="520" cy="42" fill="#ffb3ad" r="5"></circle>
+<circle cx="520" cy="42" fill="#ffb3ad" r="3"></circle>
+<circle cx="520" cy="60" fill="#4cd7f6" r="3"></circle>
+</svg>
+<!-- Chart Legend Bottom Overlay -->
+<div class="absolute bottom-1 inset-x-2 flex justify-between text-[10px] font-label-sm text-outline px-2 bg-surface-container-lowest/80 py-0.5 rounded">
+<div class="flex items-center space-x-3">
+<span class="flex items-center text-primary"><span class="h-0.5 w-3 bg-primary mr-1"></span>Rain Intensity (mm/hr)</span>
+<span class="flex items-center text-secondary"><span class="h-1 w-3 bg-secondary mr-1"></span>River Stage (m)</span>
+<span class="flex items-center text-on-surface-variant"><span class="h-2 w-3 bg-secondary/30 mr-1"></span>AI Risk Probability %</span>
+</div>
+<span>T-60m ➔ NOW (14:48 NPT) ➔ +30m PROJECTION</span>
+</div>
+</div>
+<!-- Scenario Simulator Interactive Controls -->
+<div class="mt-space-md p-space-sm bg-surface-container rounded border border-outline-variant/40">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+<span class="text-label-sm font-label-sm text-primary uppercase font-bold flex items-center space-x-1">
+<span class="material-symbols-outlined text-[15px]" data-icon="tune">tune</span>
+<span>Real-Time Parameter Simulator &amp; Injection Matrix</span>
+</span>
+<div class="flex items-center space-x-1 text-label-sm font-label-sm">
+<span class="text-outline">Sim Speed:</span>
+<button class="px-1.5 py-0.5 bg-surface-container-high rounded text-on-surface-variant hover:text-on-surface">1x</button>
+<button class="px-1.5 py-0.5 bg-primary-container text-on-primary-container font-bold rounded">2x</button>
+<button class="px-1.5 py-0.5 bg-surface-container-high rounded text-on-surface-variant hover:text-on-surface">5x</button>
+</div>
+</div>
+<!-- Preset Buttons -->
+<div class="flex flex-wrap gap-1.5 mb-3">
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-bright text-on-surface-variant hover:text-on-surface rounded text-label-sm font-label-sm border border-outline-variant/40 transition-colors" onclick="setScenario('baseline')">
+                Normal Baseline
+              </button>
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-bright text-on-surface-variant hover:text-on-surface rounded text-label-sm font-label-sm border border-outline-variant/40 transition-colors" onclick="setScenario('monsoon')">
+                Heavy Monsoon
+              </button>
+<button class="px-2 py-1 bg-secondary-container text-on-secondary-container font-bold rounded text-label-sm font-label-sm border border-secondary transition-colors" onclick="setScenario('cloudburst')">
+                Flash Flood Cloudburst [ACTIVE]
+              </button>
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-bright text-tertiary rounded text-label-sm font-label-sm border border-outline-variant/40 transition-colors" onclick="setScenario('falsealarm')">
+                Sensor Glitch / False Alarm
+              </button>
+<button class="px-2 py-1 bg-surface-container-low hover:bg-surface-bright text-on-surface-variant rounded text-label-sm font-label-sm border border-outline-variant/40 transition-colors" onclick="setScenario('recovery')">
+                Post-Flood Recession
+              </button>
+</div>
+<!-- Interactive Sliders UI -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm text-label-sm font-label-sm">
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant/30">
+<div class="flex justify-between mb-1">
+<span class="text-outline">Precipitation Inflow:</span>
+<span class="text-primary font-bold" id="rainVal">84.2 mm/h</span>
+</div>
+<input class="w-full accent-primary h-1 bg-surface-variant rounded cursor-pointer" max="150" min="0" oninput="updateRain(this.value)" type="range" value="84"/>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant/30">
+<div class="flex justify-between mb-1">
+<span class="text-outline">Surge Velocity Delta:</span>
+<span class="text-secondary font-bold" id="surgeVal">+0.42 m/h</span>
+</div>
+<input class="w-full accent-secondary h-1 bg-surface-variant rounded cursor-pointer" max="1.0" min="-0.2" oninput="updateSurge(this.value)" step="0.02" type="range" value="0.42"/>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded border border-outline-variant/30">
+<div class="flex justify-between mb-1">
+<span class="text-outline">Catchment Saturation:</span>
+<span class="text-tertiary font-bold">94.2 %</span>
+</div>
+<input class="w-full accent-tertiary h-1 bg-surface-variant rounded cursor-pointer" max="100" min="10" type="range" value="94"/>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-2 flex justify-between items-center text-label-sm font-label-sm text-outline">
+<span>Simulation Engine: 10Hz ESP32 LoRa Virtualized Client</span>
+<div class="flex items-center space-x-2">
+<button class="text-primary hover:underline">Reset to Live Feed</button>
+<span>•</span>
+<button class="text-on-surface hover:underline">Simulation Log</button>
+</div>
+</div>
+</div>
+<!-- Right Pane (5 Cols): Tactical GIS Corridor & False Alarm Showcase -->
+<div class="lg:col-span-5 space-y-space-md">
+<!-- GIS Map Corridor Graphic Card -->
+<div class="bg-surface-container-low border border-outline-variant/40 rounded-lg p-space-md relative overflow-hidden">
+<div class="flex justify-between items-center border-b border-outline-variant/40 pb-space-sm mb-3">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="map">map</span>
+<span class="text-label-md font-label-md text-on-surface uppercase font-bold">
+                Melamchi-Indrawati Catchment Corridor GIS
+              </span>
+</div>
+<span class="text-label-sm font-label-sm text-primary px-1.5 py-0.5 bg-surface-container rounded border border-primary/30">
+              Live Hydraulic Nodes
+            </span>
+</div>
+<!-- Synthetic High-Contrast Vector Tactical Map -->
+<div class="relative w-full h-56 bg-surface-container-lowest rounded border border-outline-variant/40 overflow-hidden p-2">
+<!-- Contour Elevation Lines (Tactical Map Backdrop) -->
+<svg class="absolute inset-0 w-full h-full opacity-20 pointer-events-none" viewbox="0 0 400 250">
+<path d="M0,40 Q100,20 200,60 T400,30" fill="none" stroke="#869397" stroke-width="1"></path>
+<path d="M0,90 Q150,70 250,110 T400,80" fill="none" stroke="#869397" stroke-width="1"></path>
+<path d="M0,150 Q120,140 220,180 T400,140" fill="none" stroke="#869397" stroke-width="1"></path>
+<path d="M0,210 Q180,190 270,230 T400,190" fill="none" stroke="#869397" stroke-width="1"></path>
+<!-- River Vector Channel -->
+<path d="M50,10 C120,50 160,90 190,130 C220,170 270,200 350,230" fill="none" opacity="0.6" stroke="#06b6d4" stroke-width="6"></path>
+<path d="M50,10 C120,50 160,90 190,130 C220,170 270,200 350,230" fill="none" opacity="0.8" stroke="#ffb3ad" stroke-dasharray="8 4" stroke-width="2"></path>
+</svg>
+<!-- Vector Flow Trajectory -->
+<div class="absolute top-2 left-2 text-[9px] font-label-sm text-outline bg-surface-container-high/70 px-1.5 py-0.5 rounded">
+              Elevation Gradient: 2,540m ➔ 610m ASL
+            </div>
+<!-- Interactive Station Pins & Zones -->
+<!-- Zone A: Node 01 -->
+<div class="absolute top-6 left-12 group cursor-pointer">
+<div class="flex items-center space-x-1">
+<span class="h-3 w-3 rounded-full bg-secondary ring-4 ring-secondary/30 pulse-tactical"></span>
+<span class="text-[10px] font-label-sm bg-surface-container px-1 py-0.5 rounded text-secondary font-bold border border-secondary">
+                  Node 01: Upper Helambu [2540m]
+                </span>
+</div>
+<span class="text-[8px] font-label-sm text-on-surface-variant block ml-4">82.4 mm/h cloudburst epicenter</span>
+</div>
+<!-- Zone B: Node 02 (Hazard Epicenter) -->
+<div class="absolute top-24 left-36 group cursor-pointer z-10">
+<div class="flex items-center space-x-1">
+<span class="h-3.5 w-3.5 rounded-full bg-secondary ring-4 ring-secondary/50 pulse-tactical"></span>
+<span class="text-[10px] font-label-sm bg-secondary-container text-on-secondary-container px-1.5 py-0.5 rounded font-bold border border-secondary shadow-lg">
+                  Zone B: Pul Bazaar [840m]
+                </span>
+</div>
+<span class="text-[9px] font-label-sm text-secondary font-semibold block ml-4">Stage 4.15m // +0.42m/h SURGE</span>
+</div>
+<!-- Zone C: Node 03 -->
+<div class="absolute bottom-16 right-28 group cursor-pointer">
+<div class="flex items-center space-x-1">
+<span class="h-2.5 w-2.5 rounded-full bg-tertiary ring-2 ring-tertiary/30"></span>
+<span class="text-[10px] font-label-sm bg-surface-container px-1 py-0.5 rounded text-tertiary border border-tertiary">
+                  Node 03: Bahunepati [720m]
+                </span>
+</div>
+<span class="text-[8px] font-label-sm text-outline block ml-3">Stage 2.4m // Inundation alert +65m</span>
+</div>
+<!-- Zone D: Node 04 -->
+<div class="absolute bottom-4 right-8 group cursor-pointer">
+<div class="flex items-center space-x-1">
+<span class="h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-primary/30"></span>
+<span class="text-[10px] font-label-sm bg-surface-container px-1 py-0.5 rounded text-primary border border-primary/40">
+                  Node 04: Indrawati Confluence [610m]
+                </span>
+</div>
+</div>
+<!-- Flow Velocity Arrow Indicator Overlay -->
+<div class="absolute bottom-2 left-2 flex items-center space-x-1 bg-surface-container-lowest/80 px-2 py-1 rounded text-[9px] font-label-sm text-primary">
+<span class="material-symbols-outlined text-[13px] rotate-45" data-icon="arrow_forward">arrow_forward</span>
+<span>Downstream Hydro Wave Speed: 4.2 m/s</span>
+</div>
+</div>
+<div class="mt-2 flex justify-between items-center text-label-sm font-label-sm text-on-surface-variant">
+<span>GIS Map Provider: Nepal Survey Dept / NASA SRTM 30m</span>
+<span class="text-primary hover:underline cursor-pointer">Expand 3D Bathymetry GIS</span>
+</div>
+</div>
+<!-- Multi-Signal False-Alarm Rejection Showcase Card -->
+<div class="bg-surface-container-low border border-outline-variant/40 rounded-lg p-space-md">
+<div class="flex items-center space-x-2 border-b border-outline-variant/40 pb-space-sm mb-3">
+<span class="material-symbols-outlined text-surface-tint text-[18px]" data-icon="verified_user">verified_user</span>
+<span class="text-label-md font-label-md text-on-surface uppercase font-bold">
+              Multi-Signal False-Alarm Rejection Architecture
+            </span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm text-label-sm font-label-sm">
+<!-- Legacy System Flaw -->
+<div class="bg-surface-container-lowest p-2.5 rounded border border-error-container/40 relative">
+<span class="text-[10px] uppercase font-bold text-secondary flex items-center space-x-1 mb-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="close">close</span>
+<span>Legacy Single-Threshold</span>
+</span>
+<p class="text-body-sm text-xs text-on-surface-variant">
+                Triggers sirens strictly on <strong>Rainfall &gt;70mm/hr</strong>. Produces 42% false-alarm rate when rain strikes dry or high-drainage terrain without river response, causing community alarm fatigue.
+              </p>
+<div class="mt-2 text-[10px] text-secondary font-mono">
+                Specificity: 58.4% (Severe Alert Fatigue)
+              </div>
+</div>
+<!-- SENSORA Dual-Vector Validation -->
+<div class="bg-surface-container-lowest p-2.5 rounded border border-primary/40 relative">
+<span class="text-[10px] uppercase font-bold text-primary flex items-center space-x-1 mb-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+<span>SENSORA Multi-Modal AI</span>
+</span>
+<p class="text-body-sm text-xs text-on-surface-variant">
+                Requires dual-vector confirmation: High rain coupled with <strong>River Surge Velocity (&gt;0.35m/hr)</strong> and upstream acoustic vibration. Suppresses harmless downpours.
+              </p>
+<div class="mt-2 text-[10px] text-surface-tint font-mono">
+                Specificity: 98.2% (Zero False Sirens)
+              </div>
+</div>
+</div>
+<div class="mt-2.5 p-2 bg-surface-container rounded flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-on-surface-variant">Step 5 Demo Verification:</span>
+<button class="text-primary hover:text-surface-tint underline font-semibold" onclick="triggerFalseAlarmTest()">
+              Inject 95mm/hr Dry Rain Spike ➔ Verify Rejection
+            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 7. SENSOR NETWORK HARDWARE DIAGNOSTICS (4-Column Node Grid)        -->
+<!-- ===================================================================== -->
+<section class="px-margin pt-space-md" id="incident-log">
+<div class="bg-surface-container-low border border-outline-variant/40 rounded-lg p-space-md">
+<!-- Grid Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-outline-variant/40 pb-space-sm mb-space-md">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="developer_board">developer_board</span>
+<span class="text-label-md font-label-md text-on-surface uppercase font-bold">
+            Himalayan Edge Hardware Mesh Diagnostics (ESP32 + LoRaWAN SX1262)
+          </span>
+</div>
+<div class="flex items-center space-x-3 text-label-sm font-label-sm text-on-surface-variant">
+<span>Packets Received: <strong class="text-on-surface font-mono">14,289</strong></span>
+<span>•</span>
+<span>Packet Loss: <strong class="text-surface-tint font-mono">0.14%</strong></span>
+<span>•</span>
+<button class="px-2 py-1 bg-surface-container hover:bg-surface-container-high rounded text-primary border border-outline-variant/40 transition-colors">
+            Ping All Nodes (10ms)
+          </button>
+</div>
+</div>
+<!-- 4 Node Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-space-sm">
+<!-- Node 01 -->
+<div class="bg-surface-container-lowest p-space-sm rounded border border-outline-variant/40 hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-center mb-1.5">
+<span class="text-label-sm font-label-sm text-primary font-bold">NODE-01 // HELAMBU</span>
+<span class="px-1.5 py-0.2 bg-surface-container-high text-surface-tint rounded text-[9px] font-label-sm font-bold flex items-center space-x-1">
+<span class="h-1.5 w-1.5 rounded-full bg-surface-tint"></span>
+<span>ONLINE</span>
+</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mb-2">Upper Helambu Gorge // 2,540m ASL</p>
+<div class="space-y-1 text-label-sm font-label-sm border-t border-outline-variant/20 pt-1.5">
+<div class="flex justify-between text-outline">
+<span>Hardware:</span>
+<span class="text-on-surface">Ultrasonic Radar + Tipping Bucket</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>Solar / Battery:</span>
+<span class="text-surface-tint">96% (3.98V LiFePO4)</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>RF Signal (RSSI):</span>
+<span class="text-on-surface font-mono">-82 dBm (SNR 9.4)</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>Sensor Health:</span>
+<span class="text-surface-tint">Transducer Clear</span>
+</div>
+</div>
+</div>
+<!-- Node 02: Warning Trigger Source -->
+<div class="bg-surface-container-lowest p-space-sm rounded border-2 border-secondary bg-secondary-container/5 relative overflow-hidden">
+<div class="flex justify-between items-center mb-1.5">
+<span class="text-label-sm font-label-sm text-secondary font-bold">NODE-02 // PUL BAZAAR</span>
+<span class="px-1.5 py-0.2 bg-secondary text-on-secondary rounded text-[9px] font-label-sm font-bold flex items-center space-x-1 pulse-tactical">
+<span class="h-1.5 w-1.5 rounded-full bg-on-secondary"></span>
+<span>TRIGGER_SURGE</span>
+</span>
+</div>
+<p class="text-[11px] text-secondary-fixed mb-2">Melamchi Bridge Pier // 840m ASL</p>
+<div class="space-y-1 text-label-sm font-label-sm border-t border-secondary/30 pt-1.5">
+<div class="flex justify-between text-outline">
+<span>Hardware:</span>
+<span class="text-on-surface">Radar Stage Gauge + Piezo Rain</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>Solar / Battery:</span>
+<span class="text-surface-tint">91% (3.92V LiFePO4)</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>RF Signal (RSSI):</span>
+<span class="text-on-surface font-mono">-74 dBm (SNR 11.2)</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>Status Event:</span>
+<span class="text-secondary font-bold">Bankfull Approaching</span>
+</div>
+</div>
+</div>
+<!-- Node 03 -->
+<div class="bg-surface-container-lowest p-space-sm rounded border border-outline-variant/40 hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-center mb-1.5">
+<span class="text-label-sm font-label-sm text-primary font-bold">NODE-03 // BAHUNEPA TI</span>
+<span class="px-1.5 py-0.2 bg-surface-container-high text-surface-tint rounded text-[9px] font-label-sm font-bold flex items-center space-x-1">
+<span class="h-1.5 w-1.5 rounded-full bg-surface-tint"></span>
+<span>ONLINE</span>
+</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mb-2">Bahunepati Agricultural Plain // 720m</p>
+<div class="space-y-1 text-label-sm font-label-sm border-t border-outline-variant/20 pt-1.5">
+<div class="flex justify-between text-outline">
+<span>Hardware:</span>
+<span class="text-on-surface">Hydrostatic Pressure + Soil Moisty</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>Solar / Battery:</span>
+<span class="text-surface-tint">88% (3.86V LiFePO4)</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>RF Signal (RSSI):</span>
+<span class="text-on-surface font-mono">-91 dBm (SNR 6.8)</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>Soil Saturation:</span>
+<span class="text-tertiary">94.2% Infiltration Zero</span>
+</div>
+</div>
+</div>
+<!-- Node 04 -->
+<div class="bg-surface-container-lowest p-space-sm rounded border border-outline-variant/40 hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-center mb-1.5">
+<span class="text-label-sm font-label-sm text-primary font-bold">NODE-04 // CONFLUENCE</span>
+<span class="px-1.5 py-0.2 bg-surface-container-high text-surface-tint rounded text-[9px] font-label-sm font-bold flex items-center space-x-1">
+<span class="h-1.5 w-1.5 rounded-full bg-surface-tint"></span>
+<span>ONLINE</span>
+</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mb-2">Indrawati River Junction // 610m ASL</p>
+<div class="space-y-1 text-label-sm font-label-sm border-t border-outline-variant/20 pt-1.5">
+<div class="flex justify-between text-outline">
+<span>Hardware:</span>
+<span class="text-on-surface">Dual Doppler Velocity + Turbidity</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>Solar / Battery:</span>
+<span class="text-surface-tint">99% (4.12V LiFePO4)</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>RF Signal (RSSI):</span>
+<span class="text-on-surface font-mono">-69 dBm (SNR 12.8)</span>
+</div>
+<div class="flex justify-between text-outline">
+<span>Debris Turbidity:</span>
+<span class="text-primary">820 NTU (Mudflow Risk)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 8. TACTICAL FOOTER (Shared Component JSON Blueprint)                -->
+<!-- ===================================================================== -->
+<footer class="mt-auto bg-surface-container-lowest border-t border-outline-variant/40 flex justify-between items-center w-full px-margin py-2 text-label-sm font-label-sm transition-colors duration-150">
+<!-- Left: Immutable Product & Coordinate String from JSON -->
+<div class="flex items-center space-x-2">
+<span class="h-2 w-2 rounded-full bg-secondary pulse-tactical"></span>
+<span class="text-label-sm font-label-sm uppercase tracking-widest text-on-surface-variant">
+        SENSORA HIMALAYAN EARLY WARNING NETWORK // DEFENSE LEVEL 4 ACTIVE // COORD 30.3165 N 78.0322 E
+      </span>
+</div>
+<!-- Right: Operational Links exactly matching JSON array -->
+<div class="hidden md:flex items-center space-x-space-md">
+<a class="text-on-surface-variant hover:text-primary hover:underline transition-colors duration-150" href="#">
+        Protocol Manual SOP-7
+      </a>
+<span class="text-outline-variant">•</span>
+<span class="text-on-surface-variant font-bold">
+        LoRaWAN Uplink: Nominal
+      </span>
+<span class="text-outline-variant">•</span>
+<span class="text-on-surface-variant">
+        Sensor Health: 98.4%
+      </span>
+<span class="text-outline-variant">•</span>
+<a class="text-primary font-bold hover:underline transition-colors duration-150 flex items-center space-x-1" href="#">
+<span class="material-symbols-outlined text-[14px]" data-icon="phone_in_talk">phone_in_talk</span>
+<span>Crisis Hotline Active</span>
+</a>
+</div>
+</footer>
+<!-- ===================================================================== -->
+<!-- MODEL PERFORMANCE & BENCHMARKS MODAL                                -->
+<!-- ===================================================================== -->
+<div class="fixed inset-0 z-50 bg-surface-container-lowest/80 backdrop-blur-sm hidden items-center justify-center p-4" id="benchmarkModal">
+<div class="bg-surface-container-low border border-outline-variant max-w-2xl w-full rounded-lg shadow-2xl p-space-md">
+<div class="flex justify-between items-center border-b border-outline-variant/40 pb-2 mb-4">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary" data-icon="insights">insights</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">ML Hydrological Evaluation Matrix &amp; Field Benchmarks</h3>
+</div>
+<button class="p-1 hover:text-primary" onclick="closeModal()">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="space-y-4 text-body-sm font-body-sm text-on-surface-variant">
+<div class="grid grid-cols-3 gap-3 text-center">
+<div class="p-3 bg-surface-container rounded border border-outline-variant/30">
+<span class="text-headline-md font-headline-md text-surface-tint font-bold">96.8%</span>
+<span class="block text-label-sm font-label-sm text-outline mt-1">Accuracy on Flash Floods</span>
+</div>
+<div class="p-3 bg-surface-container rounded border border-outline-variant/30">
+<span class="text-headline-md font-headline-md text-primary font-bold">1.8%</span>
+<span class="block text-label-sm font-label-sm text-outline mt-1">False Alarm Rate</span>
+</div>
+<div class="p-3 bg-surface-container rounded border border-outline-variant/30">
+<span class="text-headline-md font-headline-md text-secondary font-bold">+48 min</span>
+<span class="block text-label-sm font-label-sm text-outline mt-1">Lead Time vs Bankfull</span>
+</div>
+</div>
+<p class="text-xs leading-relaxed">
+          Evaluated against 4 years of retrospective Melamchi cloudburst occurrences (2021-2024) including the June 2021 catastrophe. Sensor fusion between Ultrasonic stage sensors and upstream rainfall rates prevents false alarm triggering during dry intense downpours with an AUC-ROC metric of 0.991.
+        </p>
+<div class="bg-surface-container-lowest p-3 rounded border border-outline-variant/30 font-label-sm text-xs">
+<div class="flex justify-between mb-1">
+<span>Model Backbone:</span>
+<span class="text-on-surface">Bi-LSTM + XGBoost Hybrid Ensemble</span>
+</div>
+<div class="flex justify-between mb-1">
+<span>Precision: 95.2%</span>
+<span>Recall / Sensitivity: 98.4%</span>
+</div>
+<div class="flex justify-between">
+<span>Edge Microcontroller:</span>
+<span class="text-primary">ESP32-S3 (TensorFlow Lite Micro 180KB RAM)</span>
+</div>
+</div>
+</div>
+<div class="mt-5 text-right">
+<button class="px-4 py-1.5 bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold rounded" onclick="closeModal()">
+          Close Technical Benchmark
+        </button>
+</div>
+</div>
+</div>
+<!-- ===================================================================== -->
+<!-- JAVASCRIPT: MICRO-INTERACTIONS & LIVE SIMULATOR ENGINE               -->
+<!-- ===================================================================== -->
+<script>
+    let sirenArmed = true;
+    let autoCycleActive = false;
+    let autoCycleTimer = null;
+    let currentStep = 3;
+
+    function toggleSiren() {
+      sirenArmed = !sirenArmed;
+      const label = document.getElementById('sirenLabel');
+      const btn = document.getElementById('sirenBtn');
+      if (sirenArmed) {
+        label.innerText = 'Siren: ARMED';
+        btn.classList.add('border-outline');
+        btn.classList.remove('border-secondary', 'text-secondary');
+      } else {
+        label.innerText = 'Siren: MUTED';
+        btn.classList.add('border-secondary', 'text-secondary');
+      }
+    }
+
+    function updateRain(val) {
+      document.getElementById('rainVal').innerText = val + ' mm/h';
+    }
+
+    function updateSurge(val) {
+      const sign = val > 0 ? '+' : '';
+      document.getElementById('surgeVal').innerText = sign + parseFloat(val).toFixed(2) + ' m/h';
+    }
+
+    function setScenario(type) {
+      if (type === 'baseline') {
+        updateRain(8.4);
+        updateSurge(0.04);
+      } else if (type === 'monsoon') {
+        updateRain(42.0);
+        updateSurge(0.18);
+      } else if (type === 'cloudburst') {
+        updateRain(84.2);
+        updateSurge(0.42);
+      } else if (type === 'falsealarm') {
+        updateRain(95.0);
+        updateSurge(0.02);
+      } else if (type === 'recovery') {
+        updateRain(2.1);
+        updateSurge(-0.15);
+      }
+    }
+
+    function triggerFalseAlarmTest() {
+      setScenario('falsealarm');
+      alert('SIMULATION TEST: High rainfall (95 mm/hr) injected without hydrological river surge. Dual-sensor correlation validated: Siren alert SUPPRESSED successfully.');
+    }
+
+    function nextStep() {
+      currentStep = (currentStep % 6) + 1;
+      updateStepUI();
+    }
+
+    function prevStep() {
+      currentStep = currentStep === 1 ? 6 : currentStep - 1;
+      updateStepUI();
+    }
+
+    function updateStepUI() {
+      if (currentStep === 5) {
+        setScenario('falsealarm');
+      } else if (currentStep === 3) {
+        setScenario('cloudburst');
+      } else if (currentStep === 1) {
+        setScenario('baseline');
+      } else if (currentStep === 2) {
+        setScenario('monsoon');
+      }
+    }
+
+    function toggleAutoCycle() {
+      autoCycleActive = !autoCycleActive;
+      const btn = document.getElementById('autoCycleBtn');
+      if (autoCycleActive) {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[13px] animate-spin" data-icon="autorenew">autorenew</span><span>Auto-Cycle: ON</span>';
+        btn.classList.add('bg-primary', 'text-on-primary');
+        autoCycleTimer = setInterval(() => {
+          nextStep();
+        }, 5000);
+      } else {
+        btn.innerHTML = '<span class="material-symbols-outlined text-[13px]" data-icon="autorenew">autorenew</span><span>Auto-Cycle: OFF</span>';
+        btn.classList.remove('bg-primary', 'text-on-primary');
+        clearInterval(autoCycleTimer);
+      }
+    }
+
+    // Keyboard Hotkey Support
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && e.target === document.body) {
+        e.preventDefault();
+        nextStep();
+      }
+    });
+
+    function openModal() {
+      document.getElementById('benchmarkModal').classList.remove('hidden');
+      document.getElementById('benchmarkModal').classList.add('flex');
+    }
+
+    function closeModal() {
+      document.getElementById('benchmarkModal').classList.add('hidden');
+      document.getElementById('benchmarkModal').classList.remove('flex');
+    }
+  </script>
+</body></html>

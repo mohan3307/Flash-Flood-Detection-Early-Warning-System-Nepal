@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  sensora:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sensora_app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./sensora.db
+      - BASE_TICK_SECONDS=1.0
+    restart: unless-stopped
