@@ -13,6 +13,7 @@ from fastapi.responses import FileResponse
 from app.config import settings
 from app.database.session import init_db
 from app.api.routes import router as api_router
+from app.api.integrations_routes import router as integrations_router
 from app.api.websocket import manager, simulation_broadcast_loop
 from app.ml.model_service import model_service
 
@@ -57,6 +58,7 @@ app.add_middleware(
 
 # REST Routes
 app.include_router(api_router, prefix="/api")
+app.include_router(integrations_router, prefix="/api")
 
 # Real-time WebSocket endpoint
 @app.websocket("/ws/stream")
@@ -64,8 +66,11 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            # Keep connection alive and accept client commands if sent
-            data = await websocket.receive_text()
+            # Yield control to asyncio loop and handle optional client pings
+            try:
+                data = await asyncio.wait_for(websocket.receive_text(), timeout=20.0)
+            except asyncio.TimeoutError:
+                pass
     except Exception:
         manager.disconnect(websocket)
 

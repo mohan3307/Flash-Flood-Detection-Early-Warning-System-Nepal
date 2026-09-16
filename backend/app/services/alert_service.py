@@ -1,11 +1,52 @@
 """
 Alert Service and SOP Recommendation Engine for SENSORA.
+Integrates automated Twilio emergency SMS broadcasts with cooldown deduplication.
 """
 
-from typing import Dict, Any, List
+import time
+from typing import Dict, Any, List, Optional
 from datetime import datetime
+import logging
+
+logger = logging.getLogger("sensora.alerts")
 
 class AlertService:
+    def __init__(self):
+        self.last_sms_dispatch_time: float = 0
+        self.sms_cooldown_seconds: float = 300.0 # 5 minutes cooldown between automated SMS
+
+    def check_and_dispatch_emergency_broadcast(
+        self,
+        risk_level: str,
+        zone_name: str,
+        headline: str,
+        recommended_action: str,
+        lead_time_minutes: int
+    ) -> Optional[Dict[str, Any]]:
+        """Automatically triggers Twilio emergency SMS when HIGH risk is reached (with cooldown)."""
+        if risk_level != "HIGH":
+            return None
+
+        now = time.time()
+        if (now - self.last_sms_dispatch_time) < self.sms_cooldown_seconds:
+            # Cooldown active to prevent SMS spam
+            return None
+
+        self.last_sms_dispatch_time = now
+        try:
+            from app.services.integrations_service import integrations_service
+            result = integrations_service.dispatch_twilio_sms(
+                headline=headline,
+                action=recommended_action,
+                lead_time_minutes=lead_time_minutes,
+                zone_name=zone_name
+            )
+            logger.info(f"Automated Twilio emergency dispatch triggered for {zone_name}: {result['status']}")
+            return result
+        except Exception as e:
+            logger.error(f"Failed to trigger automated Twilio dispatch: {e}")
+            return None
+
     @staticmethod
     def get_emergency_sops(risk_level: str) -> List[Dict[str, Any]]:
         if risk_level == "HIGH":

@@ -6,6 +6,7 @@ interface HeaderProps {
   onlineSensorsCount: number;
   totalSensorsCount: number;
   onOpenPerformance: () => void;
+  onOpenIntegrations?: () => void;
   scenario: string;
 }
 
@@ -14,6 +15,7 @@ export const Header: React.FC<HeaderProps> = ({
   onlineSensorsCount,
   totalSensorsCount,
   onOpenPerformance,
+  onOpenIntegrations,
   scenario
 }) => {
   const [currentTime, setCurrentTime] = useState<string>('');
@@ -95,6 +97,16 @@ export const Header: React.FC<HeaderProps> = ({
               {activeAlertsCount > 0 ? `${activeAlertsCount} CRITICAL ALERT` : 'NOMINAL'}
             </span>
           </div>
+
+          {/* API Integrations Modal Trigger */}
+          <button
+            onClick={onOpenIntegrations}
+            className="flex items-center gap-1.5 px-3 py-1 rounded bg-[#171f33] hover:bg-[#1f293d] text-[#4cd7f6] font-bold font-mono text-xs border border-[#06b6d4]/40 transition cursor-pointer"
+            title="Manage Twilio, LoRaWAN, MQTT, Google Maps, OpenWeather, and Gemini AI Integrations"
+          >
+            <RadioReceiver className="w-3.5 h-3.5 text-[#4cd7f6]" />
+            <span>EXTERNAL APIS (8)</span>
+          </button>
 
           {/* Model Performance Modal Trigger */}
           <button

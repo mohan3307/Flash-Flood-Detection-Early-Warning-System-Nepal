@@ -134,8 +134,71 @@ def test_suite():
     assert "SENSORA" in res.text or "<div id=\"root\">" in res.text
     print("[PASS] 9. Frontend SPA Delivery: index.html served at root with compiled React bundle")
 
+    # 10. External API Integrations Verification (All 8 Services)
+    # A. Integrations Status
+    res = requests.get(f"{BASE_URL}/api/integrations/status")
+    assert res.status_code == 200
+    status_data = res.json()
+    assert status_data["total_integrations"] == 8
+    print(f"[PASS] 10A. /api/integrations/status: All 8 external API providers recognized and monitored")
+
+    # B. Twilio Emergency SMS Dispatch
+    res = requests.post(f"{BASE_URL}/api/integrations/twilio/send-alert", json={
+        "headline": "VERIFICATION DRILL",
+        "action": "Immediate evacuation test.",
+        "zone_name": "Melamchi Pul Bazaar"
+    })
+    assert res.status_code == 200
+    assert "DELIVERED" in res.json()["status"] or "SIMULATED" in res.json()["status"]
+    print(f"[PASS] 10B. /api/integrations/twilio/send-alert: Emergency broadcast dispatched ({res.json()['status']})")
+
+    # C. OpenWeatherMap Live Synoptic Weather
+    res = requests.get(f"{BASE_URL}/api/integrations/weather/live")
+    assert res.status_code == 200
+    weather = res.json()
+    assert "temperature_c" in weather and "rainfall_1h_mm" in weather
+    print(f"[PASS] 10C. /api/integrations/weather/live: Synoptic weather active ({weather['location']}, {weather['temperature_c']}°C)")
+
+    # D. Earth Observation Satellite Telemetry
+    res = requests.get(f"{BASE_URL}/api/integrations/satellite/data")
+    assert res.status_code == 200
+    sat = res.json()
+    assert "soil_saturation_index_pct" in sat
+    print(f"[PASS] 10D. /api/integrations/satellite/data: Sentinel radar soil saturation = {sat['soil_saturation_index_pct']}%")
+
+    # E. LoRaWAN Gateway Webhook (TTN v3)
+    ttn_payload = {
+        "end_device_ids": {"device_id": "SNSR-NP-LORAWAN-01"},
+        "uplink_message": {
+            "decoded_payload": {"stage_m": 2.85, "rain_mm": 45.0, "battery_pct": 94},
+            "rx_metadata": [{"rssi": -92, "snr": 8.5}]
+        }
+    }
+    res = requests.post(f"{BASE_URL}/api/integrations/lorawan/uplink", json=ttn_payload)
+    assert res.status_code == 200
+    print(f"[PASS] 10E. /api/integrations/lorawan/uplink: TTN gateway uplink packet ingested for {res.json()['device_id']}")
+
+    # F. MQTT IoT Broker Ingestion
+    mqtt_payload = {
+        "topic": "sensora/nepal/catchment/telemetry",
+        "sensor_id": "SNSR-NP-002",
+        "water_level": 3.10,
+        "rainfall_intensity": 58.0,
+        "rate_of_rise": 0.38
+    }
+    res = requests.post(f"{BASE_URL}/api/integrations/mqtt/simulate-publish", json=mqtt_payload)
+    assert res.status_code == 200
+    print(f"[PASS] 10F. /api/integrations/mqtt/simulate-publish: ESP32 telemetry packet processed over MQTT topic")
+
+    # G. Google Gemini 1.5 Flash Multilingual SitRep
+    res = requests.post(f"{BASE_URL}/api/integrations/ai/generate-sitrep", json={"zone_code": "ZONE-B"})
+    assert res.status_code == 200
+    sitrep = res.json()
+    assert "executive_summary" in sitrep and "nepali_broadcast" in sitrep
+    print(f"[PASS] 10G. /api/integrations/ai/generate-sitrep: Executive SitRep & Nepali broadcast bulletin generated")
+
     print("=" * 60)
-    print("ALL 9 VERIFICATION CHECKS COMPLETED WITH 100% SUCCESS!")
+    print("ALL 16 VERIFICATION CHECKS COMPLETED WITH 100% SUCCESS!")
     print("=" * 60)
 
 if __name__ == "__main__":

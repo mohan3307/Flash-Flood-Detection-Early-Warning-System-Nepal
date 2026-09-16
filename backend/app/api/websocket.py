@@ -11,14 +11,17 @@ from app.simulation.engine import simulation_engine
 class ConnectionManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
-        self._broadcast_task = None
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
-        self.active_connections.append(websocket)
+        if websocket not in self.active_connections:
+            self.active_connections.append(websocket)
         # Send immediate initial state
-        initial_frame = simulation_engine.tick()
-        await websocket.send_text(json.dumps(initial_frame))
+        try:
+            initial_frame = simulation_engine.tick()
+            await websocket.send_text(json.dumps(initial_frame))
+        except Exception as e:
+            print(f"Error sending initial frame to WebSocket: {e}")
 
     def disconnect(self, websocket: WebSocket):
         if websocket in self.active_connections:
@@ -26,7 +29,7 @@ class ConnectionManager:
 
     async def broadcast(self, message: str):
         dead_connections = []
-        for connection in self.active_connections:
+        for connection in list(self.active_connections):
             try:
                 await connection.send_text(message)
             except Exception:

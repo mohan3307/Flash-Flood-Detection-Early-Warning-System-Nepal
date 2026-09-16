@@ -156,6 +156,11 @@ def get_model_performance():
     }
 
 # Simulation Control Endpoints
+@router.get("/simulation/frame")
+def get_simulation_frame():
+    """Returns the latest real-time simulation telemetry frame."""
+    return simulation_engine.get_latest_frame()
+
 @router.post("/simulation/scenario")
 def set_scenario(req: ScenarioRequest):
     valid_scenarios = ["normal", "heavy_rain", "flash_flood", "false_alarm", "recovery", "custom"]

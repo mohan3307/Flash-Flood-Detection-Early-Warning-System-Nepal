@@ -1,9 +1,14 @@
-import { ModelMetrics, ZoneState } from '../types';
+import { ModelMetrics, ZoneState, StreamFrame } from '../types';
 
 const API_BASE = '/api';
 
 export async function fetchHealth() {
   const res = await fetch(`${API_BASE}/health`);
+  return res.json();
+}
+
+export async function fetchSimulationFrame(): Promise<StreamFrame> {
+  const res = await fetch(`${API_BASE}/simulation/frame`);
   return res.json();
 }
 

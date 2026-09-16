@@ -43,6 +43,7 @@ class SimulationEngine:
         self.flood_onset_tick: Optional[int] = None
         self.first_warning_tick: Optional[int] = None
         self.lead_time_minutes: float = 45.0
+        self.last_frame: Optional[Dict[str, Any]] = None
 
         self._init_zones()
 
@@ -204,7 +205,7 @@ class SimulationEngine:
         elif any(z["risk_level"] == "MEDIUM" for z in self.zone_states.values()):
             overall_risk = "MEDIUM"
 
-        return {
+        frame = {
             "timestamp": timestamp,
             "scenario": self.current_scenario,
             "speed": self.speed,
@@ -217,6 +218,14 @@ class SimulationEngine:
             "active_alerts": self.active_alerts,
             "alerts_count": len(self.active_alerts)
         }
+        self.last_frame = frame
+        return frame
+
+    def get_latest_frame(self) -> Dict[str, Any]:
+        """Returns the most recent simulation frame or computes a fresh one."""
+        if self.last_frame is not None:
+            return self.last_frame
+        return self.tick()
 
     def _step_zone_physics(self, code: str, state: Dict[str, Any], meta: Dict[str, Any]) -> tuple[float, float, float]:
         """
@@ -325,5 +334,44 @@ class SimulationEngine:
                     "recommended_action": hz["recommended_action"],
                     "lead_time_minutes": round(self.lead_time_minutes, 1)
                 })
+
+    def ingest_hardware_reading(
+        self,
+        sensor_id: str,
+        rainfall_intensity: float,
+        water_level: float,
+        temperature: float = 22.0,
+        rate_of_rise: Optional[float] = None
+    ) -> Dict[str, Any]:
+        """Ingests live readings from hardware sensors, LoRaWAN gateways, or MQTT brokers."""
+        matched_zone = "ZONE-A"
+        for code, z in self.zone_states.items():
+            if z.get("sensor_id") == sensor_id:
+                matched_zone = code
+                break
+
+        buf = self.feature_buffers[matched_zone]
+        feats = buf.push_and_compute(rainfall_intensity, water_level, temperature)
+        prediction = model_service.predict(feats)
+
+        # Update zone state with live reading
+        z = self.zone_states[matched_zone]
+        z["rainfall_intensity"] = round(rainfall_intensity, 2)
+        z["water_level"] = round(water_level, 3)
+        z["temperature"] = round(temperature, 1)
+        z["rate_of_rise"] = round(rate_of_rise if rate_of_rise is not None else feats["rate_of_rise"], 3)
+        z["risk_level"] = prediction["risk_level"]
+        z["probability"] = prediction["probability"]
+        z["probabilities"] = prediction["probabilities"]
+        z["status"] = "ONLINE"
+        z["last_update"] = datetime.utcnow().strftime("%H:%M:%S UTC")
+
+        return {
+            "status": "ingested",
+            "sensor_id": sensor_id,
+            "zone_code": matched_zone,
+            "features": feats,
+            "prediction": prediction
+        }
 
 simulation_engine = SimulationEngine()

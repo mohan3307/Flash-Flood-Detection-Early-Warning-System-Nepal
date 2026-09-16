@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckCircle2, ArrowRight, Zap, Play, ChevronRight, ChevronLeft } from 'lucide-react';
 import { setScenario } from '../services/api';
 
@@ -15,6 +15,14 @@ export const DemoModeBanner: React.FC<DemoModeBannerProps> = ({
 }) => {
   const [activeStep, setActiveStep] = useState<number>(1);
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
+
+  // Sync active step when currentScenario changes
+  useEffect(() => {
+    if (currentScenario === 'normal') setActiveStep(1);
+    else if (currentScenario === 'heavy_rain') setActiveStep(2);
+    else if (currentScenario === 'flash_flood' && activeStep !== 4) setActiveStep(3);
+    else if (currentScenario === 'false_alarm') setActiveStep(5);
+  }, [currentScenario]);
 
   const steps = [
     {

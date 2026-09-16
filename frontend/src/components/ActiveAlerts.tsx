@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Siren, Volume2, VolumeX, CheckCircle, Clock, ShieldAlert } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Siren, Volume2, VolumeX, CheckCircle, Clock, Copy, Check, Radio, Send } from 'lucide-react';
 import { AlertItem } from '../types';
 
 interface ActiveAlertsProps {
@@ -9,31 +9,80 @@ interface ActiveAlertsProps {
 
 export const ActiveAlerts: React.FC<ActiveAlertsProps> = ({ alerts, leadTimeMinutes }) => {
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const timerRef = useRef<any>(null);
 
-  const playAlertChime = () => {
+  // Play a brief tactical emergency beep
+  const playAlertPulse = () => {
     try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(880, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      osc.frequency.setValueAtTime(960, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(480, ctx.currentTime + 0.35);
+
+      gain.gain.setValueAtTime(0.18, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+
       osc.connect(gain);
       gain.connect(ctx.destination);
+
       osc.start();
-      osc.stop(ctx.currentTime + 0.5);
+      osc.stop(ctx.currentTime + 0.35);
     } catch (e) {
-      console.warn('Audio chime unsupported:', e);
+      console.warn('Web Audio warning:', e);
     }
   };
 
-  const toggleAudio = () => {
-    setIsAudioEnabled(!isAudioEnabled);
-    if (!isAudioEnabled) {
-      playAlertChime();
+  // Manage periodic audio siren when enabled and alerts exist
+  useEffect(() => {
+    if (isAudioEnabled && alerts && alerts.length > 0) {
+      playAlertPulse();
+      timerRef.current = setInterval(playAlertPulse, 3500);
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     }
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [isAudioEnabled, alerts]);
+
+  const toggleAudio = () => {
+    const next = !isAudioEnabled;
+    setIsAudioEnabled(next);
+    if (next) {
+      playAlertPulse();
+    }
+  };
+
+  const copySitRep = (alert: AlertItem) => {
+    const sitrep = `[SENSORA EMERGENCY SITREP - ${new Date().toISOString()}]\n` +
+      `SECTOR: ${alert.zone_name} (${alert.zone_code})\n` +
+      `ALERT LEVEL: CRITICAL FLASH FLOOD BREACH\n` +
+      `ESTIMATED LEAD TIME: ~${alert.lead_time_minutes || leadTimeMinutes} minutes\n` +
+      `REASON: ${alert.reason}\n` +
+      `MANDATORY ACTION: ${alert.recommended_action}\n` +
+      `AUTHORITY: National Disaster Risk Reduction and Management Authority (NDRRMA) Nepal`;
+
+    navigator.clipboard.writeText(sitrep).then(() => {
+      setCopiedId(alert.id);
+      setTimeout(() => setCopiedId(null), 2500);
+    });
   };
 
   if (!alerts || alerts.length === 0) {
@@ -91,7 +140,7 @@ export const ActiveAlerts: React.FC<ActiveAlertsProps> = ({ alerts, leadTimeMinu
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 self-end lg:self-auto font-mono">
+            <div className="flex items-center gap-2 self-end lg:self-auto font-mono">
               {/* Lead Time Countdown Pill */}
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0b1326] border border-[#ef4444]/60 text-[#ffb4ab] text-xs">
                 <Clock className="w-4 h-4 text-[#ef4444]" />
@@ -101,16 +150,41 @@ export const ActiveAlerts: React.FC<ActiveAlertsProps> = ({ alerts, leadTimeMinu
                 </span>
               </div>
 
+              {/* Copy Dispatch SitRep */}
+              <button
+                onClick={() => copySitRep(alert)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#171f33] border border-[#3d494c] text-[#dae2fd] hover:text-[#4cd7f6] hover:bg-[#222a3d] transition cursor-pointer text-xs"
+                title="Copy standardized Situation Report dispatch to clipboard"
+              >
+                {copiedId === alert.id ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-[#10b981]" />
+                    <span className="text-[#10b981] font-bold">COPIED</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>COPY SITREP</span>
+                  </>
+                )}
+              </button>
+
               {/* Siren Audio Toggle */}
               <button
                 onClick={toggleAudio}
-                className="p-2 rounded-lg bg-[#171f33] border border-[#3d494c] text-[#dae2fd] hover:text-white hover:bg-[#222a3d] transition cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#171f33] border border-[#3d494c] text-[#dae2fd] hover:text-white hover:bg-[#222a3d] transition cursor-pointer text-xs"
                 title={isAudioEnabled ? 'Mute Alert Siren' : 'Enable Emergency Siren Audio'}
               >
                 {isAudioEnabled ? (
-                  <Volume2 className="w-4 h-4 text-[#ef4444] animate-bounce" />
+                  <>
+                    <Volume2 className="w-4 h-4 text-[#ef4444] animate-bounce" />
+                    <span className="text-[#ef4444] font-bold">SIREN ARMED</span>
+                  </>
                 ) : (
-                  <VolumeX className="w-4 h-4 text-[#869397]" />
+                  <>
+                    <VolumeX className="w-4 h-4 text-[#869397]" />
+                    <span className="text-[#869397]">SIREN OFF</span>
+                  </>
                 )}
               </button>
             </div>

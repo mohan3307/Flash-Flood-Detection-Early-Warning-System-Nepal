@@ -226,10 +226,10 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
         };
       case 'tactical':
         return {
-          url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-          subdomains: 'abcd',
-          maxZoom: 19,
-          attr: 'CARTO Tactical Dark',
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+          subdomains: 'abc',
+          maxZoom: 16,
+          attr: 'Esri Dark Canvas (Tactical)',
           isGoogle: false,
         };
       case 'satellite':
@@ -473,11 +473,11 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
       });
 
       circle.bindTooltip(
-        `<div style="font-family: 'JetBrains Mono', monospace; font-size: 10px;">
-          <strong>DOPPLER RADAR REFLECTIVITY</strong><br/>
-          ${isCloudburst ? '55-65 dBZ (Cloudburst Core)' : isHeavy ? '40-50 dBZ (Heavy Precip)' : '25-35 dBZ (Scattered)'}
+        `<div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; line-height: 1.3;">
+          <strong style="color: #4cd7f6;">DOPPLER RADAR REFLECTIVITY</strong><br/>
+          ${isCloudburst ? '<span style="color: #ef4444; font-weight: bold;">55-65 dBZ (Cloudburst Core)</span>' : isHeavy ? '<span style="color: #ffb95f; font-weight: bold;">40-50 dBZ (Heavy Rain)</span>' : '<span style="color: #10b981;">25-35 dBZ (Scattered)</span>'}
         </div>`,
-        { sticky: true }
+        { sticky: false, direction: 'top' }
       );
 
       radarGroup.addLayer(circle);
