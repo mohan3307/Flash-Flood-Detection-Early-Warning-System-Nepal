@@ -15,6 +15,7 @@ import {
   Compass,
   Key,
   CheckCircle2,
+  X,
 } from 'lucide-react';
 import { GoogleMapsApiKeyModal } from './GoogleMapsApiKeyModal';
 
@@ -601,12 +602,37 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
     }
   }, [selectedZoneCode]);
 
-  // Invalidate map size when expanded
+  // Handle Fullscreen Escape key & body scroll lock
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isExpanded) {
+        setIsExpanded(false);
+      }
+    };
+    if (isExpanded) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isExpanded]);
+
+  // Multi-stage Invalidate map size when expanded / restored
   useEffect(() => {
     if (!mapInstanceRef.current) return;
-    setTimeout(() => {
-      mapInstanceRef.current?.invalidateSize();
-    }, 200);
+    const map = mapInstanceRef.current;
+    const t1 = setTimeout(() => map.invalidateSize(), 50);
+    const t2 = setTimeout(() => map.invalidateSize(), 180);
+    const t3 = setTimeout(() => map.invalidateSize(), 350);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
   }, [isExpanded]);
 
   // Navigation handlers
@@ -650,38 +676,45 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
 
   return (
     <div
-      className={`rounded-xl bg-[#131b2e]/90 border border-[#222a3d] p-4 flex flex-col justify-between overflow-hidden reticle-box transition-all duration-300 ${
-        isExpanded ? 'fixed inset-4 z-50 shadow-2xl bg-[#0b1326]' : 'relative'
+      className={`rounded-xl transition-all duration-300 ${
+        isExpanded
+          ? 'fixed inset-0 z-[9999] bg-[#070e1b] p-3 sm:p-4 md:p-5 flex flex-col h-screen w-screen overflow-hidden backdrop-blur-2xl shadow-2xl'
+          : 'relative bg-[#131b2e]/90 border border-[#222a3d] p-4 flex flex-col justify-between overflow-hidden reticle-box'
       }`}
     >
       {/* Top Controls Bar */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-3">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 mb-2.5">
         {/* Title and Catchment Identifier */}
-        <div className="flex items-center gap-2">
-          <div className="p-2 rounded bg-[#06b6d4]/10 text-[#4cd7f6] border border-[#06b6d4]/30">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-lg bg-[#06b6d4]/10 text-[#4cd7f6] border border-[#06b6d4]/30 shadow-md shadow-cyan-500/10">
             <MapPin className="w-4 h-4" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-white tracking-wide font-['Space_Grotesk']">
-                TACTICAL GIS CATCHMENT MAP
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-sm sm:text-base font-bold text-white tracking-wide font-['Space_Grotesk']">
+                {isExpanded ? 'SENSORA // FULL TACTICAL GIS SURVEILLANCE MATRIX' : 'TACTICAL GIS CATCHMENT MAP'}
               </h3>
               <span className="px-2 py-0.5 text-[9px] font-mono uppercase bg-[#06b6d4]/10 text-[#4cd7f6] border border-[#06b6d4]/30 rounded">
                 Sindhupalchok, Nepal
               </span>
+              {isExpanded && (
+                <span className="px-2 py-0.5 text-[9px] font-mono uppercase bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/40 rounded font-bold">
+                  FULL SIZE VIEW
+                </span>
+              )}
             </div>
             <p className="text-[11px] text-[#869397] font-mono">
-              Melamchi-Indrawati Basin // 26km Corridor (2480m → 640m)
+              Melamchi-Indrawati Basin Corridor // 26km Catchment (2,480m MSL → 640m MSL)
             </p>
           </div>
         </div>
 
         {/* Action Controls & Layer Switcher */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 font-mono">
           {/* Google Maps API Key Config Button */}
           <button
             onClick={() => setIsKeyModalOpen(true)}
-            className={`px-2.5 py-1 text-[11px] font-mono rounded flex items-center gap-1.5 transition-all ${
+            className={`px-2.5 py-1 text-[11px] font-mono rounded flex items-center gap-1.5 transition-all cursor-pointer ${
               googleApiKey
                 ? 'bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/40 hover:bg-[#10b981]/25'
                 : 'bg-[#ffb95f]/15 text-[#ffb95f] border border-[#ffb95f]/40 hover:bg-[#ffb95f]/25 animate-pulse'
@@ -690,7 +723,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
           >
             <Key className="w-3.5 h-3.5" />
             <span className="font-bold">
-              {googleApiKey ? 'Google Maps [Key Active]' : 'Configure Google Key'}
+              {googleApiKey ? 'Google Maps [Active]' : 'Google Key'}
             </span>
             {googleApiKey && <CheckCircle2 className="w-3 h-3" />}
           </button>
@@ -702,7 +735,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
                 setBasemapCategory('google');
                 setActiveBasemap('google_hybrid');
               }}
-              className={`px-2 py-1 text-[10px] font-mono rounded transition-all ${
+              className={`px-2 py-1 text-[10px] font-mono rounded transition-all cursor-pointer ${
                 basemapCategory === 'google'
                   ? 'bg-[#06b6d4] text-[#000000] font-bold'
                   : 'text-[#869397] hover:text-[#dae2fd]'
@@ -715,7 +748,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
                 setBasemapCategory('tactical');
                 setActiveBasemap('tactical');
               }}
-              className={`px-2 py-1 text-[10px] font-mono rounded transition-all ${
+              className={`px-2 py-1 text-[10px] font-mono rounded transition-all cursor-pointer ${
                 basemapCategory === 'tactical'
                   ? 'bg-[#06b6d4] text-[#000000] font-bold'
                   : 'text-[#869397] hover:text-[#dae2fd]'
@@ -744,7 +777,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
                         setIsKeyModalOpen(true);
                       }
                     }}
-                    className={`px-2 py-1 text-[10px] font-mono font-medium rounded transition-all ${
+                    className={`px-2 py-1 text-[10px] font-mono font-medium rounded transition-all cursor-pointer ${
                       activeBasemap === b.id
                         ? 'bg-[#4cd7f6] text-[#000000] font-bold shadow-sm'
                         : 'text-[#869397] hover:text-[#dae2fd]'
@@ -765,7 +798,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
                   <button
                     key={b.id}
                     onClick={() => setActiveBasemap(b.id)}
-                    className={`px-2 py-1 text-[10px] font-mono font-medium rounded transition-all ${
+                    className={`px-2 py-1 text-[10px] font-mono font-medium rounded transition-all cursor-pointer ${
                       activeBasemap === b.id
                         ? 'bg-[#06b6d4] text-[#000000] font-bold shadow-sm'
                         : 'text-[#869397] hover:text-[#dae2fd]'
@@ -781,7 +814,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
           <div className="flex items-center gap-1 bg-[#0b1326] p-1 rounded-lg border border-[#222a3d]">
             <button
               onClick={() => setShowInundation(!showInundation)}
-              className={`p-1.5 rounded text-[10px] font-mono flex items-center gap-1 transition-all ${
+              className={`p-1.5 rounded text-[10px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
                 showInundation
                   ? 'bg-[#06b6d4]/20 text-[#4cd7f6] border border-[#06b6d4]/40'
                   : 'text-[#869397] hover:text-white'
@@ -794,7 +827,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
 
             <button
               onClick={() => setShowShelters(!showShelters)}
-              className={`p-1.5 rounded text-[10px] font-mono flex items-center gap-1 transition-all ${
+              className={`p-1.5 rounded text-[10px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
                 showShelters
                   ? 'bg-[#10b981]/20 text-[#10b981] border border-[#10b981]/40'
                   : 'text-[#869397] hover:text-white'
@@ -807,7 +840,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
 
             <button
               onClick={() => setShowRadar(!showRadar)}
-              className={`p-1.5 rounded text-[10px] font-mono flex items-center gap-1 transition-all ${
+              className={`p-1.5 rounded text-[10px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
                 showRadar
                   ? 'bg-[#a855f7]/20 text-[#c084fc] border border-[#a855f7]/40'
                   : 'text-[#869397] hover:text-white'
@@ -819,11 +852,11 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
             </button>
           </div>
 
-          {/* Quick Navigation Controls */}
-          <div className="flex items-center gap-1">
+          {/* Quick Navigation & Full Size Controls */}
+          <div className="flex items-center gap-1.5">
             <button
               onClick={handleFocusHighRisk}
-              className="px-2.5 py-1 text-[11px] font-mono rounded bg-[#ef4444]/20 text-[#ffb4ab] border border-[#ef4444]/40 hover:bg-[#ef4444]/30 flex items-center gap-1 transition-all"
+              className="px-2.5 py-1 text-[11px] font-mono rounded bg-[#ef4444]/20 text-[#ffb4ab] border border-[#ef4444]/40 hover:bg-[#ef4444]/30 flex items-center gap-1 transition-all cursor-pointer"
               title="Fly directly to highest risk sector"
             >
               <AlertTriangle className="w-3.5 h-3.5 text-[#ef4444]" />
@@ -832,29 +865,42 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
 
             <button
               onClick={handleResetBasinView}
-              className="p-1.5 rounded bg-[#0b1326] text-[#869397] hover:text-[#4cd7f6] border border-[#222a3d]"
+              className="p-1.5 rounded bg-[#0b1326] text-[#869397] hover:text-[#4cd7f6] border border-[#222a3d] cursor-pointer"
               title="Reset view to whole basin"
             >
               <Compass className="w-4 h-4" />
             </button>
 
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="p-1.5 rounded bg-[#0b1326] text-[#869397] hover:text-[#4cd7f6] border border-[#222a3d]"
-              title={isExpanded ? 'Minimize map' : 'Expand full tactical map'}
-            >
-              {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-            </button>
+            {/* FULL SIZE / MINIMIZE BUTTON */}
+            {isExpanded ? (
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold rounded-lg bg-[#ef4444]/20 hover:bg-[#ef4444]/35 text-[#ffb4ab] border border-[#ef4444]/60 shadow-lg shadow-red-950/40 cursor-pointer transition-all hover:scale-105 active:scale-95"
+                title="Exit full size mode (or press ESC)"
+              >
+                <Minimize2 className="w-3.5 h-3.5" />
+                <span>EXIT FULL SIZE (ESC)</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsExpanded(true)}
+                className="flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold rounded-lg bg-[#06b6d4]/15 hover:bg-[#06b6d4]/30 text-[#4cd7f6] border border-[#06b6d4]/50 shadow-md shadow-cyan-500/20 cursor-pointer transition-all hover:scale-105 active:scale-95"
+                title="Expand map to full size"
+              >
+                <Maximize2 className="w-3.5 h-3.5" />
+                <span>FULL SIZE</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       {/* Main Map Container */}
-      <div className="relative">
+      <div className={`relative ${isExpanded ? 'flex-1 w-full min-h-0 my-1.5' : ''}`}>
         <div
           ref={mapContainerRef}
           className={`w-full rounded-lg overflow-hidden border border-[#222a3d] relative z-0 shadow-inner transition-all duration-300 ${
-            isExpanded ? 'h-[65vh]' : 'h-84'
+            isExpanded ? 'h-full min-h-[500px]' : 'h-84'
           }`}
         />
 
@@ -896,7 +942,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
               <button
                 key={z.zone_code}
                 onClick={() => onSelectZone && onSelectZone(z.zone_code)}
-                className={`px-2 py-1 text-[10px] font-mono rounded flex items-center gap-1.5 transition-all ${
+                className={`px-2 py-1 text-[10px] font-mono rounded flex items-center gap-1.5 transition-all cursor-pointer ${
                   isSelected
                     ? 'bg-[#06b6d4] text-[#000000] font-bold shadow-md'
                     : 'bg-[#131b2e] text-[#dae2fd] hover:bg-[#1e293b] border border-[#222a3d]'
@@ -904,6 +950,9 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
               >
                 <span className={`w-1.5 h-1.5 rounded-full ${badgeColor}`} />
                 <span>{z.zone_code.replace('ZONE-', 'Z')}</span>
+                {isExpanded && (
+                  <span className="text-[9px] opacity-80">({z.water_level.toFixed(1)}m)</span>
+                )}
               </button>
             );
           })}
@@ -928,15 +977,15 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
       </div>
 
       {/* Elevation Profile Cross-Section Bar */}
-      <div className="mt-3 bg-[#0b1326] p-2.5 rounded-lg border border-[#222a3d]">
-        <div className="flex items-center justify-between text-[10px] font-mono text-[#869397] mb-1.5">
+      <div className="mt-2 bg-[#0b1326] p-2 sm:p-2.5 rounded-lg border border-[#222a3d]">
+        <div className="flex items-center justify-between text-[10px] font-mono text-[#869397] mb-1.5 flex-wrap gap-1">
           <div className="flex items-center gap-1">
             <Mountain className="w-3.5 h-3.5 text-[#4cd7f6]" />
             <span className="font-bold text-[#dae2fd]">BASIN ELEVATION GRADIENT (TOTAL DROP: 1,840m / 7.1% SLOPE)</span>
           </div>
           <span>Surge Travel Time: ~45 mins from Gorge to Bazaar</span>
         </div>
-        <div className="grid grid-cols-4 gap-2 text-center text-[10px] font-mono">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[10px] font-mono">
           <div className="bg-[#131b2e] p-1.5 rounded border border-[#222a3d]">
             <div className="text-[#869397] text-[9px]">GORGE HEADWATERS</div>
             <div className="text-[#4cd7f6] font-bold">2,480m MSL</div>
@@ -961,12 +1010,12 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
       </div>
 
       {/* Footer / Legend */}
-      <div className="mt-2.5 pt-2 border-t border-[#222a3d] flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] font-mono text-[#869397] gap-2">
+      <div className="mt-2 pt-1.5 border-t border-[#222a3d] flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] font-mono text-[#869397] gap-2">
         <div className="flex items-center gap-2">
           <Info className="w-3.5 h-3.5 text-[#4cd7f6]" />
           <span>Click stations for sensor telemetry HUD or shelters for evacuation routes</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-[#10b981]" /> Low
           </span>
