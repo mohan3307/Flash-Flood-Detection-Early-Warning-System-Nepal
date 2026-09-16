@@ -11,6 +11,8 @@ import {
   CheckCircle2,
   Waves,
   Calendar,
+  Camera,
+  Radio,
 } from 'lucide-react';
 
 interface HydrographViewProps {
@@ -169,79 +171,102 @@ export const HydrographView: React.FC<HydrographViewProps> = ({
       {/* Main MultiSensorChart */}
       <MultiSensorChart data={history} />
 
-      {/* Real-Time Telemetry Log Table */}
-      <div className="bg-[#131b2e] border border-[#222a3d] rounded-xl p-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-[#222a3d]">
-          <div>
-            <h3 className="text-sm font-bold text-white font-['Space_Grotesk']">
-              Live Rolling Telemetry Stream Log ({history.length} Ingested Samples)
-            </h3>
-            <p className="text-xs text-[#869397] font-mono">
-              High-frequency 1Hz sensor buffer with stage, precipitation, and ML confidence
-            </p>
+      {/* Real-world River Telemetry & Hydrometric Camera Card */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+        <div className="md:col-span-5 bg-[#131b2e] border border-[#222a3d] rounded-xl overflow-hidden relative group">
+          <div className="relative h-56 md:h-full min-h-[220px]">
+            <img
+              src="/assets/images/station_telemetry.jpg"
+              alt="Hydrometric Station on Melamchi Riverbank"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-90"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b1326] via-[#0b1326]/30 to-transparent" />
+            <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#0b1326]/90 border border-[#06b6d4]/50 text-[#4cd7f6] text-[10px] font-mono font-bold">
+              <Camera className="w-3 h-3" />
+              <span>STATION LIVE OPTICAL FEED</span>
+            </div>
+            <div className="absolute bottom-3 left-3 right-3 text-xs">
+              <div className="text-white font-bold font-['Space_Grotesk']">
+                Zone B Ultrasonic Sounding Point
+              </div>
+              <div className="text-[10px] text-[#869397] font-mono mt-0.5">
+                River Stage Transducer: MB7389 • Sampling Rate: 1 Hz
+              </div>
+            </div>
           </div>
-
-          <button
-            onClick={handleExportCSV}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer border ${
-              downloaded
-                ? 'bg-[#10b981]/20 text-[#10b981] border-[#10b981]'
-                : 'bg-[#06b6d4]/15 hover:bg-[#06b6d4]/25 text-[#4cd7f6] border-[#06b6d4]/40'
-            }`}
-          >
-            {downloaded ? <CheckCircle2 className="w-4 h-4" /> : <Download className="w-4 h-4" />}
-            <span>{downloaded ? 'CSV EXPORTED' : 'EXPORT CSV LOG'}</span>
-          </button>
         </div>
 
-        <div className="overflow-x-auto max-h-72 mt-3 scrollbar-thin">
-          <table className="w-full text-left font-mono text-xs">
-            <thead className="bg-[#0b1326] text-[#869397] sticky top-0 border-b border-[#222a3d]">
-              <tr>
-                <th className="p-2">Time (NPT)</th>
-                <th className="p-2">Rainfall (mm/h)</th>
-                <th className="p-2">River Stage (m)</th>
-                <th className="p-2">Surge Velocity (m/h)</th>
-                <th className="p-2">Risk Probability</th>
-                <th className="p-2">Threat Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#222a3d]/50">
-              {history
-                .slice()
-                .reverse()
-                .slice(0, 30)
-                .map((row, idx) => (
-                  <tr key={idx} className="hover:bg-[#171f33] transition-colors">
-                    <td className="p-2 text-white font-bold">{row.timeLabel}</td>
-                    <td className="p-2 text-[#4cd7f6]">{row.rainfall.toFixed(1)}</td>
-                    <td className="p-2 text-[#ffb95f]">{row.waterLevel.toFixed(2)}</td>
-                    <td
-                      className={`p-2 ${
-                        row.rateOfRise > 0 ? 'text-[#ef4444]' : 'text-[#10b981]'
-                      }`}
-                    >
-                      {row.rateOfRise > 0 ? '+' : ''}
-                      {row.rateOfRise.toFixed(2)}
-                    </td>
-                    <td className="p-2 text-[#dae2fd]">{row.riskProbability.toFixed(1)}%</td>
-                    <td className="p-2">
-                      <span
-                        className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
-                          row.riskLevel === 'HIGH'
-                            ? 'bg-[#ef4444]/20 text-[#ffb4ab] border border-[#ef4444]/40'
-                            : row.riskLevel === 'MEDIUM'
-                            ? 'bg-[#ffb95f]/20 text-[#ffb95f] border border-[#ffb95f]/40'
-                            : 'bg-[#10b981]/20 text-[#10b981] border border-[#10b981]/40'
+        <div className="md:col-span-7 bg-[#131b2e] border border-[#222a3d] rounded-xl p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-[#222a3d]">
+            <div>
+              <h3 className="text-sm font-bold text-white font-['Space_Grotesk']">
+                Live Rolling Telemetry Stream Log ({history.length} Ingested Samples)
+              </h3>
+              <p className="text-xs text-[#869397] font-mono">
+                High-frequency 1Hz sensor buffer with stage, precipitation, and ML confidence
+              </p>
+            </div>
+
+            <button
+              onClick={handleExportCSV}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer border ${
+                downloaded
+                  ? 'bg-[#10b981]/20 text-[#10b981] border-[#10b981]'
+                  : 'bg-[#06b6d4]/15 hover:bg-[#06b6d4]/25 text-[#4cd7f6] border-[#06b6d4]/40'
+              }`}
+            >
+              {downloaded ? <CheckCircle2 className="w-4 h-4" /> : <Download className="w-4 h-4" />}
+              <span>{downloaded ? 'CSV EXPORTED' : 'EXPORT CSV LOG'}</span>
+            </button>
+          </div>
+
+          <div className="overflow-x-auto max-h-56 mt-3 scrollbar-thin">
+            <table className="w-full text-left font-mono text-xs">
+              <thead className="bg-[#0b1326] text-[#869397] sticky top-0 border-b border-[#222a3d]">
+                <tr>
+                  <th className="p-2">Time (NPT)</th>
+                  <th className="p-2">Rainfall (mm/h)</th>
+                  <th className="p-2">River Stage (m)</th>
+                  <th className="p-2">Surge (m/h)</th>
+                  <th className="p-2">Risk</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#222a3d]/50">
+                {history
+                  .slice()
+                  .reverse()
+                  .slice(0, 15)
+                  .map((row, idx) => (
+                    <tr key={idx} className="hover:bg-[#171f33] transition-colors">
+                      <td className="p-2 text-white font-bold">{row.timeLabel}</td>
+                      <td className="p-2 text-[#4cd7f6]">{row.rainfall.toFixed(1)}</td>
+                      <td className="p-2 text-[#ffb95f]">{row.waterLevel.toFixed(2)}</td>
+                      <td
+                        className={`p-2 ${
+                          row.rateOfRise > 0 ? 'text-[#ef4444]' : 'text-[#10b981]'
                         }`}
                       >
-                        {row.riskLevel}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+                        {row.rateOfRise > 0 ? '+' : ''}
+                        {row.rateOfRise.toFixed(2)}
+                      </td>
+                      <td className="p-2">
+                        <span
+                          className={`text-[9px] px-1.5 py-0.2 rounded font-bold ${
+                            row.riskLevel === 'HIGH'
+                              ? 'bg-[#ef4444]/20 text-[#ffb4ab] border border-[#ef4444]/40'
+                              : row.riskLevel === 'MEDIUM'
+                              ? 'bg-[#ffb95f]/20 text-[#ffb95f] border border-[#ffb95f]/40'
+                              : 'bg-[#10b981]/20 text-[#10b981] border border-[#10b981]/40'
+                          }`}
+                        >
+                          {row.riskLevel}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ZoneState } from '../../types';
 import { FloodRiskMap } from '../map/FloodRiskMap';
 import {
@@ -11,6 +11,11 @@ import {
   ArrowDownRight,
   ShieldAlert,
   Building,
+  Camera,
+  Maximize2,
+  ExternalLink,
+  Eye,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface GisMapViewProps {
@@ -61,6 +66,8 @@ export const GisMapView: React.FC<GisMapViewProps> = ({
   onSelectZone,
   scenario,
 }) => {
+  const [activePhoto, setActivePhoto] = useState<string | null>(null);
+
   const activeZone =
     zones.find((z) => z.zone_code === selectedZoneCode) || zones[0];
 
@@ -69,12 +76,12 @@ export const GisMapView: React.FC<GisMapViewProps> = ({
       {/* Top Station Live Telemetry Banner */}
       <div className="bg-[#131b2e] border border-[#222a3d] rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-lg bg-[#06b6d4]/15 text-[#4cd7f6] border border-[#06b6d4]/40">
+          <div className="p-2.5 rounded-lg bg-[#06b6d4]/15 text-[#4cd7f6] border border-[#06b6d4]/40 shadow-md shadow-cyan-500/10">
             <MapPin className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-white font-['Space_Grotesk']">
+              <h2 className="text-base font-bold text-white font-['Space_Grotesk'] tracking-tight">
                 {activeZone?.name || 'Sindhupalchok Basin'}
               </h2>
               <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-[#06b6d4]/20 text-[#4cd7f6] border border-[#06b6d4]/40 rounded">
@@ -139,6 +146,73 @@ export const GisMapView: React.FC<GisMapViewProps> = ({
         onSelectZone={onSelectZone}
         scenario={scenario}
       />
+
+      {/* Real-time Field Surveillance Imagery: Catchment & Evacuation Shelters */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* Melamchi Catchment Valley Aerial Imagery */}
+        <div className="bg-[#131b2e] border border-[#222a3d] rounded-xl overflow-hidden group relative">
+          <div className="relative h-56 sm:h-64 overflow-hidden">
+            <img
+              src="/assets/images/melamchi_valley.jpg"
+              alt="Melamchi-Indrawati River Basin Aerial Survey"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-90 contrast-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b1326] via-[#0b1326]/40 to-transparent" />
+            <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0b1326]/90 border border-[#06b6d4]/50 backdrop-blur-md text-[#4cd7f6] text-[11px] font-mono font-bold">
+              <Camera className="w-3.5 h-3.5" />
+              <span>AERIAL CATCHMENT SURVEILLANCE</span>
+            </div>
+            <div className="absolute top-3 right-3 px-2 py-0.5 rounded bg-[#10b981]/20 border border-[#10b981]/50 text-[#10b981] text-[10px] font-mono font-bold">
+              LIVE OPTICAL FEED
+            </div>
+          </div>
+          <div className="p-4 bg-[#131b2e]">
+            <div className="flex items-center justify-between mb-1">
+              <h4 className="text-sm font-bold text-white font-['Space_Grotesk']">
+                Melamchi-Indrawati River Corridor & Confluence
+              </h4>
+              <span className="text-[10px] font-mono text-[#869397]">
+                2,480m → 785m MSL
+              </span>
+            </div>
+            <p className="text-xs text-[#869397] leading-relaxed">
+              Optical high-resolution aerial survey tracking hydraulic channel bottleneck points, vulnerable Bailey bridge crossings, and downstream terraced settlements.
+            </p>
+          </div>
+        </div>
+
+        {/* High-Ground Safe Evacuation Shelter Photo */}
+        <div className="bg-[#131b2e] border border-[#222a3d] rounded-xl overflow-hidden group relative">
+          <div className="relative h-56 sm:h-64 overflow-hidden">
+            <img
+              src="/assets/images/evacuation_shelter.jpg"
+              alt="Designated Safe Evacuation Highland Shelter"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 filter brightness-90 contrast-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b1326] via-[#0b1326]/40 to-transparent" />
+            <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0b1326]/90 border border-[#10b981]/50 backdrop-blur-md text-[#10b981] text-[11px] font-mono font-bold">
+              <Shield className="w-3.5 h-3.5" />
+              <span>SAFE HIGHLAND SHELTER (935m MSL)</span>
+            </div>
+            <div className="absolute top-3 right-3 px-2 py-0.5 rounded bg-[#06b6d4]/20 border border-[#06b6d4]/50 text-[#4cd7f6] text-[10px] font-mono font-bold">
+              CLEARANCE: +65m
+            </div>
+          </div>
+          <div className="p-4 bg-[#131b2e]">
+            <div className="flex items-center justify-between mb-1">
+              <h4 className="text-sm font-bold text-white font-['Space_Grotesk']">
+                Melamchi Secondary School Community Assembly
+              </h4>
+              <span className="text-[10px] font-mono text-[#10b981] font-bold">
+                CAPACITY: 450 PERSONS
+              </span>
+            </div>
+            <p className="text-xs text-[#869397] leading-relaxed">
+              Designated high-ground flood evacuation compound. Equipped with trauma medical kits, Red Cross emergency shelters, and emergency radio communications.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Catchment Stations Profile & Infrastructure Table */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">

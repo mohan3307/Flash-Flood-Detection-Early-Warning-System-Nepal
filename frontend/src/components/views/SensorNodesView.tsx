@@ -12,6 +12,9 @@ import {
   Cpu,
   Server,
   Zap,
+  Camera,
+  Layers,
+  MapPin,
 } from 'lucide-react';
 
 interface SensorNodesViewProps {
@@ -100,6 +103,86 @@ export const SensorNodesView: React.FC<SensorNodesViewProps> = ({
           <div className="bg-[#0b1326] p-2 rounded-lg border border-[#222a3d]">
             <span className="text-[10px] text-[#869397] block">Solar Harvest</span>
             <span className="font-bold text-[#ffb95f] text-sm">14.2W</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Real-world Field Deployment Photo Card */}
+      <div className="bg-[#131b2e] border border-[#222a3d] rounded-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+        <div className="lg:col-span-6 relative h-64 sm:h-72 lg:h-auto overflow-hidden">
+          <img
+            src="/assets/images/station_telemetry.jpg"
+            alt="Field Deployment of LoRa Telemetry Station on Melamchi River"
+            className="w-full h-full object-cover filter brightness-95 contrast-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0b1326] via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#131b2e]" />
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0b1326]/90 border border-[#06b6d4]/50 backdrop-blur-md text-[#4cd7f6] text-[11px] font-mono font-bold">
+            <Camera className="w-3.5 h-3.5" />
+            <span>FIELD DEPLOYMENT // ZONE B RIVERBANK</span>
+          </div>
+          <div className="absolute bottom-3 left-3 px-2 py-1 rounded bg-[#0b1326]/80 text-[#dae2fd] text-[10px] font-mono border border-[#222a3d]">
+            Melamchi Pul Bazaar Station (870m MSL) • Sindhupalchok, Nepal
+          </div>
+        </div>
+
+        <div className="lg:col-span-6 p-5 flex flex-col justify-between space-y-4">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-2 py-0.5 text-[10px] font-mono uppercase bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/30 rounded font-bold">
+                PHYSICAL HARDWARE SPECIFICATION
+              </span>
+              <span className="text-xs text-[#869397] font-mono">
+                Model: Sensora-Node-v2
+              </span>
+            </div>
+            <h3 className="text-base font-bold text-white font-['Space_Grotesk']">
+              Autonomous Solar-Powered LoRaWAN River Station
+            </h3>
+            <p className="text-xs text-[#869397] leading-relaxed mt-1">
+              Field-deployed alongside the Melamchi River gorge. Continuously monitors water stage elevation via downward ultrasonic pulses and records rainfall volume using pulse interrupts.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono text-xs">
+            <div className="bg-[#0b1326] p-2.5 rounded-lg border border-[#222a3d]">
+              <div className="flex items-center gap-1.5 text-[#4cd7f6] font-bold text-[11px]">
+                <Sun className="w-3.5 h-3.5" />
+                <span>20W Solar + LiFePO4</span>
+              </div>
+              <p className="text-[10px] text-[#869397] mt-0.5">
+                Full 72-hour battery reserve during heavy monsoon overcast.
+              </p>
+            </div>
+
+            <div className="bg-[#0b1326] p-2.5 rounded-lg border border-[#222a3d]">
+              <div className="flex items-center gap-1.5 text-[#ffb95f] font-bold text-[11px]">
+                <Activity className="w-3.5 h-3.5" />
+                <span>Ultrasonic Sonar Arm</span>
+              </div>
+              <p className="text-[10px] text-[#869397] mt-0.5">
+                Cantilever bracket extended directly over river centerline.
+              </p>
+            </div>
+
+            <div className="bg-[#0b1326] p-2.5 rounded-lg border border-[#222a3d]">
+              <div className="flex items-center gap-1.5 text-[#10b981] font-bold text-[11px]">
+                <Wifi className="w-3.5 h-3.5" />
+                <span>SX1262 LoRa Radio</span>
+              </div>
+              <p className="text-[10px] text-[#869397] mt-0.5">
+                Up to 15km line-of-sight range along mountain river corridors.
+              </p>
+            </div>
+
+            <div className="bg-[#0b1326] p-2.5 rounded-lg border border-[#222a3d]">
+              <div className="flex items-center gap-1.5 text-[#dae2fd] font-bold text-[11px]">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#10b981]" />
+                <span>IP67 Enclosure</span>
+              </div>
+              <p className="text-[10px] text-[#869397] mt-0.5">
+                Hermetically sealed against mountain rains and debris splatter.
+              </p>
+            </div>
           </div>
         </div>
       </div>

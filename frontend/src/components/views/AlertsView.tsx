@@ -13,6 +13,9 @@ import {
   Send,
   MessageSquare,
   Users,
+  Camera,
+  ShieldCheck,
+  RadioTower,
 } from 'lucide-react';
 
 interface AlertsViewProps {
@@ -124,6 +127,59 @@ Hardware Health: ${zones.filter((z) => z.status === 'ONLINE').length}/${zones.le
 
       {/* Main Active Alerts Emergency Banner */}
       <ActiveAlerts alerts={alerts} leadTimeMinutes={leadTimeMinutes} />
+
+      {/* Real-world Operations Center Photo Card */}
+      <div className="bg-[#131b2e] border border-[#222a3d] rounded-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+        <div className="lg:col-span-7 relative h-64 sm:h-80 overflow-hidden">
+          <img
+            src="/assets/images/command_center.jpg"
+            alt="National Emergency Operations Center (DEOC / NDRRMA) Nepal"
+            className="w-full h-full object-cover filter brightness-95 contrast-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0b1326] via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#131b2e]" />
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0b1326]/90 border border-[#06b6d4]/50 backdrop-blur-md text-[#4cd7f6] text-[11px] font-mono font-bold">
+            <RadioTower className="w-3.5 h-3.5" />
+            <span>NEPAL DEOC INCIDENT COMMAND CENTER</span>
+          </div>
+          <div className="absolute bottom-3 left-3 px-2 py-1 rounded bg-[#0b1326]/80 text-[#dae2fd] text-[10px] font-mono border border-[#222a3d]">
+            National Disaster Risk Reduction & Management Authority (NDRRMA) • Singha Durbar / Sindhupalchok
+          </div>
+        </div>
+
+        <div className="lg:col-span-5 p-5 flex flex-col justify-between space-y-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="px-2 py-0.5 text-[10px] font-mono uppercase bg-[#ef4444]/20 text-[#ffb4ab] border border-[#ef4444]/40 rounded font-bold">
+                INCIDENT RESPONSE PROTOCOL
+              </span>
+              <span className="text-xs text-[#869397] font-mono">
+                Level 3 SOP
+              </span>
+            </div>
+            <h3 className="text-base font-bold text-white font-['Space_Grotesk']">
+              Multi-Agency Disaster Coordination Desk
+            </h3>
+            <p className="text-xs text-[#869397] leading-relaxed mt-1">
+              Integrated early warning feed connected directly to Nepal Armed Police Force (APF), Department of Hydrology and Meteorology (DHM), and local municipal ward sirens.
+            </p>
+          </div>
+
+          <div className="space-y-2 font-mono text-xs">
+            <div className="p-2 rounded bg-[#0b1326] border border-[#222a3d] flex items-center justify-between">
+              <span className="text-[#869397]">DEOC Emergency Hotline:</span>
+              <strong className="text-[#4cd7f6]">1155 (Toll-Free)</strong>
+            </div>
+            <div className="p-2 rounded bg-[#0b1326] border border-[#222a3d] flex items-center justify-between">
+              <span className="text-[#869397]">APF Search & Rescue:</span>
+              <strong className="text-[#ffb95f]">1114 / Melamchi Base</strong>
+            </div>
+            <div className="p-2 rounded bg-[#0b1326] border border-[#222a3d] flex items-center justify-between">
+              <span className="text-[#869397]">Automated Siren Delay:</span>
+              <strong className="text-[#10b981]">&lt; 1.2 seconds</strong>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Multilingual Emergency Alert Broadcaster & Downstream Settlements */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
