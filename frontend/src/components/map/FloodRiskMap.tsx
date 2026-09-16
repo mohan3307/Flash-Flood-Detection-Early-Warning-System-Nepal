@@ -164,6 +164,16 @@ interface SettlementPoint {
 // Villages and Cities marked by Dark Green Circles
 const VILLAGES_AND_CITIES: SettlementPoint[] = [
   {
+    id: 'city-kathmandu',
+    name: 'Kathmandu Capital City',
+    type: 'city',
+    lat: 27.7172,
+    lng: 85.3240,
+    population: '1,500,000+',
+    district: 'Kathmandu Valley HQ',
+    elevation_m: 1400,
+  },
+  {
     id: 'city-chautara',
     name: 'Chautara Municipal City',
     type: 'city',
@@ -174,6 +184,36 @@ const VILLAGES_AND_CITIES: SettlementPoint[] = [
     elevation_m: 1450,
   },
   {
+    id: 'city-banepa',
+    name: 'Banepa Municipal City',
+    type: 'city',
+    lat: 27.6298,
+    lng: 85.5214,
+    population: '68,000+',
+    district: 'Kavrepalanchok District',
+    elevation_m: 1500,
+  },
+  {
+    id: 'city-dhulikhel',
+    name: 'Dhulikhel Regional City',
+    type: 'city',
+    lat: 27.6253,
+    lng: 85.5393,
+    population: '35,000+',
+    district: 'Kavre District HQ',
+    elevation_m: 1550,
+  },
+  {
+    id: 'city-panchkhal',
+    name: 'Panchkhal Valley City',
+    type: 'city',
+    lat: 27.6433,
+    lng: 85.6186,
+    population: '42,000+',
+    district: 'Panchkhal Sector',
+    elevation_m: 860,
+  },
+  {
     id: 'town-melamchi',
     name: 'Melamchi Bazaar Town',
     type: 'town',
@@ -182,6 +222,16 @@ const VILLAGES_AND_CITIES: SettlementPoint[] = [
     population: '28,000+',
     district: 'Melamchi Municipality',
     elevation_m: 870,
+  },
+  {
+    id: 'town-dolalghat',
+    name: 'Dolalghat Confluence Town',
+    type: 'town',
+    lat: 27.6375,
+    lng: 85.7061,
+    population: '12,500+',
+    district: 'Sunkoshi Confluence',
+    elevation_m: 610,
   },
   {
     id: 'village-helambu',
@@ -233,6 +283,16 @@ const VILLAGES_AND_CITIES: SettlementPoint[] = [
     district: 'Confluence Sector',
     elevation_m: 640,
   },
+  {
+    id: 'village-lamosangu',
+    name: 'Lamosangu River Valley',
+    type: 'village',
+    lat: 27.7380,
+    lng: 85.8320,
+    population: '15,000+',
+    district: 'Arniko Highway Corridor',
+    elevation_m: 780,
+  },
 ];
 
 // Dark Blue Flowing Water River Trajectory (Melamchi to Indrawati River bed)
@@ -265,6 +325,7 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
 
   // Layer references for dynamic toggles
   const markersRef = useRef<{ [key: string]: L.CircleMarker }>({});
+  const alarmMarkersRef = useRef<{ [key: string]: L.Marker }>({});
   const hazardPolygonsRef = useRef<{ [key: string]: L.Polygon }>({});
   const infrastructureLayerRef = useRef<L.LayerGroup | null>(null);
   const villagesLayerRef = useRef<L.LayerGroup | null>(null);
@@ -797,6 +858,53 @@ export const FloodRiskMap: React.FC<FloodRiskMapProps> = ({
         });
 
         markersRef.current[zone.zone_code] = marker;
+      }
+
+      // Assign flashing Alarm Siren Symbol (🚨 / 🔔) to places with active flood alarms
+      if (isHigh || isMedium) {
+        const sirenSymbol = isHigh ? '🚨' : '🔔';
+        const alarmBadgeColor = isHigh ? '#ef4444' : '#f97316';
+        const alarmText = isHigh ? `ALARM: ${zone.name}` : `ADVISORY: ${zone.name}`;
+
+        const alarmIcon = L.divIcon({
+          className: 'leaflet-alarm-beacon',
+          html: `
+            <div class="leaflet-alarm-beacon">
+              <div class="alarm-siren-circle" style="background: radial-gradient(circle, ${alarmBadgeColor} 0%, #7f1d1d 100%); border-color: ${alarmBadgeColor}; font-size: 16px;">
+                <span class="alarm-siren-icon">${sirenSymbol}</span>
+              </div>
+              <div class="alarm-badge-label font-mono">
+                <div style="font-weight: 800; color: #ffffff;">${sirenSymbol} ${alarmText}</div>
+                <div style="font-size: 8px; color: #fecaca; opacity: 0.9;">STAGE: ${zone.water_level.toFixed(2)}m (+${zone.rate_of_rise.toFixed(2)}m/h)</div>
+              </div>
+            </div>
+          `,
+          iconSize: [160, 36],
+          iconAnchor: [17, 18],
+        });
+
+        if (alarmMarkersRef.current[zone.zone_code]) {
+          const alarmMarker = alarmMarkersRef.current[zone.zone_code];
+          alarmMarker.setIcon(alarmIcon);
+          alarmMarker.setPopupContent(popupContent);
+        } else {
+          const alarmMarker = L.marker([zone.latitude, zone.longitude], {
+            icon: alarmIcon,
+            zIndexOffset: 1000,
+          }).addTo(map);
+
+          alarmMarker.bindPopup(popupContent);
+          alarmMarker.on('click', () => {
+            if (onSelectZone) onSelectZone(zone.zone_code);
+          });
+          alarmMarkersRef.current[zone.zone_code] = alarmMarker;
+        }
+      } else {
+        // Remove alarm siren marker when risk level returns to safe normal
+        if (alarmMarkersRef.current[zone.zone_code]) {
+          map.removeLayer(alarmMarkersRef.current[zone.zone_code]);
+          delete alarmMarkersRef.current[zone.zone_code];
+        }
       }
     });
 
