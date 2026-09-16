@@ -400,6 +400,7 @@ class IntegrationsService:
                     "You are the SENSORA Chief Disaster Risk Officer for Sindhupalchok District, Nepal. "
                     "Generate a concise, tactical Emergency Situation Report (SitRep). Output JSON with keys: "
                     "'executive_summary' (English, 2 sentences), "
+                    "'identified_problems' (List of 4-5 specific tactical disaster problems, hazards, and infrastructure vulnerabilities currently threatening the catchment), "
                     "'nepali_broadcast' (Urgent radio broadcast in Nepali Devanagari script, 2 sentences), "
                     "'sop_evacuation_orders' (List of 3 short military-style action items), "
                     "'clearance_advice' (Specific advice regarding high-ground shelters vs river banks)."
@@ -447,6 +448,13 @@ class IntegrationsService:
                 f"CRITICAL SURGE DETECTED in {zone_name} ({elevation}m MSL). Upstream cloudburst runoff is driving "
                 f"a rapid river stage rise of +{rate:.2f}m/hr. Flash flood crest arrival estimated within {lead_time_minutes} minutes."
             )
+            problems = [
+                f"Extreme Hydraulic Surge: Upstream cloudburst driving rapid +{rate:.2f}m/hr rate of rise at {zone_name}.",
+                "Gorge Debris Accumulation: Massive sediment and boulder damming in Helambu gorge creates outburst flood threat.",
+                "Antecedent Soil Saturation: Catchment soil saturation at 78.4%, causing ~88% immediate surface runoff coefficient.",
+                f"Bridge Submergence Hazard: {zone_name} Bailey bridge pier clearance compromised within {lead_time_minutes} minutes.",
+                "Downstream Settlement Exposure: Densely populated riverbank market beds facing 3.5m+ crest wave surge."
+            ]
             broadcast_ne = (
                 f"अति जरुरी सूचना: मेलम्ची तथा इन्द्रावती तटीय क्षेत्रमा भीषण बाढीको जोखिम उत्पन्न भएको छ। "
                 f"नदीको सतह {stage:.2f} मिटर पुगेको छ। सबै बासिन्दाहरू तुरुन्त उच्च भूभाग र तोकिएका सुरक्षित शिविरमा जानुहोस्।"
@@ -462,6 +470,12 @@ class IntegrationsService:
                 f"ADVISORY WARNING for {zone_name}. Moderate monsoon precipitation ({rain:.1f} mm/hr) has increased "
                 f"catchment soil saturation to 78%. River stage elevated at {stage:.2f}m."
             )
+            problems = [
+                f"Elevated River Stage: River stage elevated to {stage:.2f}m with continuous rainfall ({rain:.1f} mm/h).",
+                "Monsoon Soil Saturation: Catchment topsoil reaching 78% moisture capacity, reducing water absorption.",
+                "Riparian Worksite Hazard: Riverbed workers and gravel mining machinery exposed to sudden surges.",
+                "Bridge Pier Scour Risk: Minor acoustic vibrations and debris impact logged at gorge bridge piers."
+            ]
             broadcast_ne = (
                 f"सचेतना सूचना: मेलम्ची जलाधार क्षेत्रमा निरन्तर वर्षाका कारण खोलाको बहाव बढ्दो क्रममा छ। "
                 f"नदी किनारमा नजानुहोस् र सुरक्षित स्थानमा सतर्क रहनुहोस्।"
@@ -477,6 +491,10 @@ class IntegrationsService:
                 f"NOMINAL BASELINE in {zone_name}. River stage stable at {stage:.2f}m with baseline rainfall ({rain:.1f} mm/hr). "
                 "Catchment telemetry indicates safe hydrologic equilibrium."
             )
+            problems = [
+                "Monsoon Baseflow Monitoring: Standard seasonal river volume within safe baseline thresholds.",
+                "Routine Sensor Drift: Minor calibration variance detected on secondary optical water level gauge."
+            ]
             broadcast_ne = (
                 "सामान्य अवस्था: हाल मेलम्ची र इन्द्रावती नदीमा पानीको बहाव सामान्य छ। बाढीको कुनै तात्कालिक जोखिम छैन।"
             )
@@ -490,6 +508,7 @@ class IntegrationsService:
         sitrep = {
             "source": "Google Gemini 1.5 Flash (Synthesized Intelligence)",
             "executive_summary": summary_en,
+            "identified_problems": problems,
             "nepali_broadcast": broadcast_ne,
             "sop_evacuation_orders": orders,
             "clearance_advice": clearance,

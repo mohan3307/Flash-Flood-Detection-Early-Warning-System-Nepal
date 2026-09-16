@@ -539,6 +539,25 @@ export const IntegrationsModal: React.FC<IntegrationsModalProps> = ({ isOpen, on
                     <p className="text-xs font-mono text-[#dae2fd] leading-relaxed">
                       {sitrepData.executive_summary}
                     </p>
+
+                    {/* Identified Problems & Hazards Section */}
+                    {sitrepData.identified_problems && (
+                      <div className="space-y-2">
+                        <span className="text-[11px] font-bold text-[#ef4444] font-mono flex items-center gap-1.5">
+                          <AlertTriangle className="w-3.5 h-3.5 text-[#ef4444]" />
+                          <span>IDENTIFIED PROBLEMS & CATCHMENT THREATS ({sitrepData.identified_problems.length}):</span>
+                        </span>
+                        <ul className="space-y-1.5 text-xs font-mono">
+                          {sitrepData.identified_problems.map((prob: string, idx: number) => (
+                            <li key={idx} className="flex items-start gap-2 bg-[#0b1326] p-2 rounded border border-[#ef4444]/30 text-[#ffb4ab]">
+                              <span className="text-[#ef4444] font-bold">⚠️</span>
+                              <span>{prob}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
                     <div className="space-y-2">
                       <span className="text-[11px] font-bold text-[#ffb95f] font-mono">
                         STANDARD OPERATING DIRECTIVES (SOP):
