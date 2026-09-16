@@ -1,0 +1,429 @@
+import React, { useState } from 'react';
+import {
+  LayoutDashboard,
+  MapPin,
+  LineChart,
+  BrainCircuit,
+  SlidersHorizontal,
+  Radio,
+  AlertTriangle,
+  FileSpreadsheet,
+  BarChart3,
+  RadioReceiver,
+  ChevronLeft,
+  ChevronRight,
+  Check,
+  Activity,
+  Layers,
+  ShieldCheck,
+  ExternalLink,
+  Zap,
+} from 'lucide-react';
+import { ZoneState } from '../types';
+
+export type ActiveViewType =
+  | 'overview'
+  | 'gis-map'
+  | 'hydrograph'
+  | 'xai'
+  | 'simulator'
+  | 'nodes'
+  | 'alerts';
+
+interface SidebarProps {
+  activeView: ActiveViewType;
+  onSelectView: (view: ActiveViewType) => void;
+  zones: ZoneState[];
+  selectedZoneCode: string;
+  onSelectZone: (zoneCode: string) => void;
+  onOpenPerformance: () => void;
+  onOpenIntegrations: () => void;
+  activeAlertsCount: number;
+  onlineSensorsCount: number;
+  totalSensorsCount: number;
+  scenario: string;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({
+  activeView,
+  onSelectView,
+  zones,
+  selectedZoneCode,
+  onSelectZone,
+  onOpenPerformance,
+  onOpenIntegrations,
+  activeAlertsCount,
+  onlineSensorsCount,
+  totalSensorsCount,
+  scenario,
+  isCollapsed,
+  onToggleCollapse,
+}) => {
+  const [copiedSitRep, setCopiedSitRep] = useState<boolean>(false);
+
+  const navItems: {
+    id: ActiveViewType;
+    label: string;
+    shortLabel: string;
+    description: string;
+    icon: React.ComponentType<{ className?: string }>;
+    badge?: number | string;
+    badgeColor?: string;
+  }[] = [
+    {
+      id: 'overview',
+      label: 'Telemetry HUD',
+      shortLabel: 'Overview',
+      description: 'Command Matrix & Executive Summary',
+      icon: LayoutDashboard,
+    },
+    {
+      id: 'gis-map',
+      label: 'Tactical GIS Map',
+      shortLabel: 'Map',
+      description: 'High-Res Satellite & Flood Polygons',
+      icon: MapPin,
+      badge: 'GIS',
+      badgeColor: 'bg-[#06b6d4]/15 text-[#4cd7f6] border-[#06b6d4]/40',
+    },
+    {
+      id: 'hydrograph',
+      label: 'Hydrograph & AI Forecast',
+      shortLabel: 'Hydrograph',
+      description: 'Stage, Rainfall & +45m AI Crest Projection',
+      icon: LineChart,
+      badge: '+45m AI',
+      badgeColor: 'bg-[#ffb95f]/15 text-[#ffb95f] border-[#ffb95f]/40',
+    },
+    {
+      id: 'xai',
+      label: 'Explainable AI & SHAP',
+      shortLabel: 'XAI / SHAP',
+      description: '8-Feature Attribution & False Alarm Filter',
+      icon: BrainCircuit,
+    },
+    {
+      id: 'simulator',
+      label: 'Scenario Simulator',
+      shortLabel: 'Simulator',
+      description: 'Cloudburst & GLOF Hydraulic Testbed',
+      icon: SlidersHorizontal,
+    },
+    {
+      id: 'nodes',
+      label: 'Sensor Array (LoRa)',
+      shortLabel: 'Sensors',
+      description: 'ESP32 Nodes, Battery & Signal Health',
+      icon: Radio,
+      badge: `${onlineSensorsCount}/${totalSensorsCount}`,
+      badgeColor:
+        onlineSensorsCount === totalSensorsCount
+          ? 'bg-[#10b981]/15 text-[#10b981] border-[#10b981]/40'
+          : 'bg-[#ffb95f]/15 text-[#ffb95f] border-[#ffb95f]/40',
+    },
+    {
+      id: 'alerts',
+      label: 'Active Alerts & Siren',
+      shortLabel: 'Alerts',
+      description: 'Incident Dispatch & Evacuation SOP',
+      icon: AlertTriangle,
+      badge: activeAlertsCount > 0 ? `${activeAlertsCount} ACTIVE` : undefined,
+      badgeColor: 'bg-[#ef4444]/20 text-[#ffb4ab] border-[#ef4444]/50 animate-pulse',
+    },
+  ];
+
+  const handleExportSitRep = () => {
+    const timestamp = new Date().toISOString();
+    const activeZone = zones.find((z) => z.zone_code === selectedZoneCode) || zones[0];
+    const sitRepText = `=== SENSORA TACTICAL DISASTER MANAGEMENT SITUATION REPORT ===
+Timestamp: ${timestamp}
+Target Catchment: Sindhupalchok, Nepal (Melamchi-Indrawati Corridor)
+Selected Station: ${activeZone?.name || 'Pul Bazaar'} (${activeZone?.zone_code})
+Current Scenario: ${scenario}
+Threat Status: ${activeAlertsCount > 0 ? 'CRITICAL ALERT' : 'NOMINAL'}
+Active Incident Alerts: ${activeAlertsCount}
+Precipitation Intensity: ${activeZone?.rainfall_intensity.toFixed(1)} mm/hr
+River Stage: ${activeZone?.water_level.toFixed(2)} m (Warning: 3.5m, Breach: 4.5m)
+Surge Velocity: ${activeZone?.rate_of_rise > 0 ? '+' : ''}${activeZone?.rate_of_rise.toFixed(2)} m/hr
+Risk Level: ${activeZone?.risk_level} (${activeZone?.probability.toFixed(1)}% confidence)
+SOP Directive: ${activeZone?.recommended_action}
+Hardware Health: ${zones.filter((z) => z.status === 'ONLINE').length}/${zones.length} Stations Active
+=============================================================`;
+
+    navigator.clipboard.writeText(sitRepText);
+    setCopiedSitRep(true);
+    setTimeout(() => setCopiedSitRep(false), 2500);
+  };
+
+  return (
+    <aside
+      className={`bg-[#070e1c]/95 border-r border-[#222a3d] flex flex-col justify-between transition-all duration-300 z-30 shrink-0 select-none ${
+        isCollapsed ? 'w-16' : 'w-64 sm:w-72'
+      }`}
+    >
+      {/* Top Header / Branding & Collapse Toggle */}
+      <div className="p-3 border-b border-[#222a3d] flex items-center justify-between gap-2">
+        <div className={`flex items-center gap-2.5 overflow-hidden ${isCollapsed ? 'justify-center w-full' : ''}`}>
+          <div className="w-8 h-8 rounded-lg bg-[#06b6d4]/15 border border-[#06b6d4]/40 flex items-center justify-center shrink-0 shadow-md shadow-cyan-500/10 relative">
+            <Radio className="w-4 h-4 text-[#4cd7f6] animate-pulse" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#10b981] radar-dot text-[#10b981]" />
+          </div>
+          {!isCollapsed && (
+            <div className="overflow-hidden">
+              <div className="flex items-center gap-1.5">
+                <span className="font-bold text-white font-['Space_Grotesk'] text-sm tracking-wide">
+                  SENSORA
+                </span>
+                <span className="text-[9px] px-1.5 py-0.2 rounded bg-[#06b6d4]/15 text-[#4cd7f6] border border-[#06b6d4]/30 font-mono font-bold">
+                  v2.4
+                </span>
+              </div>
+              <p className="text-[10px] text-[#869397] font-mono truncate">
+                Nepal Catchment Defense
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Toggle Collapse Button */}
+        {!isCollapsed && (
+          <button
+            onClick={onToggleCollapse}
+            className="p-1 rounded-md text-[#869397] hover:text-white hover:bg-[#131b2e] border border-transparent hover:border-[#222a3d] transition-all cursor-pointer"
+            title="Collapse sidebar"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+
+      {/* Main Navigation Modules */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden p-2.5 space-y-1.5 scrollbar-thin">
+        {/* Navigation Category Label */}
+        {!isCollapsed && (
+          <div className="px-2 pt-1 pb-0.5 text-[10px] font-mono font-bold uppercase tracking-wider text-[#5f6e73]">
+            Tactical Modules
+          </div>
+        )}
+
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = activeView === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => onSelectView(item.id)}
+              className={`w-full flex items-center gap-3 p-2 rounded-lg text-xs font-mono transition-all text-left cursor-pointer group relative ${
+                isActive
+                  ? 'bg-[#06b6d4]/15 text-[#4cd7f6] border border-[#06b6d4]/50 shadow-sm shadow-cyan-500/10 font-bold'
+                  : 'text-[#869397] hover:text-[#dae2fd] hover:bg-[#131b2e] border border-transparent'
+              }`}
+              title={isCollapsed ? `${item.label} - ${item.description}` : undefined}
+            >
+              {/* Active vertical glow indicator */}
+              {isActive && (
+                <div className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r bg-[#06b6d4] shadow-sm shadow-cyan-400" />
+              )}
+
+              <div
+                className={`p-1.5 rounded-md shrink-0 transition-colors ${
+                  isActive
+                    ? 'bg-[#06b6d4]/20 text-[#4cd7f6]'
+                    : 'bg-[#0b1326] text-[#869397] group-hover:text-[#dae2fd] group-hover:bg-[#171f33]'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+              </div>
+
+              {!isCollapsed && (
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="truncate font-medium">{item.label}</span>
+                    {item.badge && (
+                      <span
+                        className={`text-[9px] px-1.5 py-0.2 rounded font-mono border shrink-0 ${
+                          item.badgeColor || 'bg-[#171f33] text-[#dae2fd] border-[#222a3d]'
+                        }`}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-[#5f6e73] group-hover:text-[#869397] truncate leading-tight mt-0.5">
+                    {item.description}
+                  </p>
+                </div>
+              )}
+            </button>
+          );
+        })}
+
+        {/* Station Quick Selector in Sidebar */}
+        <div className="pt-3">
+          {!isCollapsed && (
+            <div className="px-2 pb-1 text-[10px] font-mono font-bold uppercase tracking-wider text-[#5f6e73] flex items-center justify-between">
+              <span>Catchment Stations</span>
+              <span className="text-[#06b6d4] text-[9px]">{zones.length} NODES</span>
+            </div>
+          )}
+
+          <div className={`space-y-1 ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
+            {zones.map((z) => {
+              const isSelected = z.zone_code === selectedZoneCode;
+              const isHigh = z.risk_level === 'HIGH';
+              const isMedium = z.risk_level === 'MEDIUM';
+              const dotColor = isHigh
+                ? 'bg-[#ef4444]'
+                : isMedium
+                ? 'bg-[#ffb95f]'
+                : 'bg-[#10b981]';
+
+              if (isCollapsed) {
+                return (
+                  <button
+                    key={z.zone_code}
+                    onClick={() => onSelectZone(z.zone_code)}
+                    className={`w-9 h-8 rounded-lg flex items-center justify-center font-mono text-[10px] font-bold border transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#06b6d4] text-[#000000] border-[#06b6d4]'
+                        : 'bg-[#0b1326] text-[#869397] border-[#222a3d] hover:text-white hover:border-[#06b6d4]/40'
+                    }`}
+                    title={`${z.name} (${z.zone_code}) - Risk: ${z.risk_level}`}
+                  >
+                    <span className="relative">
+                      {z.zone_code.replace('ZONE-', 'Z')}
+                      <span
+                        className={`absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full ${dotColor}`}
+                      />
+                    </span>
+                  </button>
+                );
+              }
+
+              return (
+                <button
+                  key={z.zone_code}
+                  onClick={() => onSelectZone(z.zone_code)}
+                  className={`w-full flex items-center justify-between p-1.5 px-2.5 rounded-lg text-xs font-mono transition-all text-left cursor-pointer border ${
+                    isSelected
+                      ? 'bg-[#06b6d4]/15 text-white border-[#06b6d4]/60 font-bold'
+                      : 'bg-[#0b1326]/60 text-[#869397] border-[#222a3d] hover:bg-[#131b2e] hover:text-[#dae2fd]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${dotColor}`} />
+                    <div className="truncate">
+                      <div className="text-[11px] font-bold truncate text-white leading-tight">
+                        {z.name}
+                      </div>
+                      <div className="text-[9px] text-[#869397] truncate">
+                        {z.zone_code} • {z.elevation_m}m MSL
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="text-[10px] font-mono text-[#4cd7f6] block">
+                      {z.water_level.toFixed(2)}m
+                    </span>
+                    <span className="text-[9px] font-mono text-[#869397] block">
+                      {z.rainfall_intensity.toFixed(0)} mm/h
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Modal Hub & Utility Tools */}
+        <div className="pt-3">
+          {!isCollapsed && (
+            <div className="px-2 pb-1 text-[10px] font-mono font-bold uppercase tracking-wider text-[#5f6e73]">
+              Tactical Utilities
+            </div>
+          )}
+
+          <div className="space-y-1">
+            {/* Quick SitRep Exporter */}
+            <button
+              onClick={handleExportSitRep}
+              className={`w-full flex items-center gap-2 p-2 rounded-lg text-xs font-mono transition-all text-left cursor-pointer border ${
+                copiedSitRep
+                  ? 'bg-[#10b981]/20 border-[#10b981] text-[#10b981]'
+                  : 'bg-[#131b2e] hover:bg-[#1a233a] border-[#222a3d] text-[#dae2fd]'
+              } ${isCollapsed ? 'justify-center p-2' : ''}`}
+              title="Copy standardized UN/DEOC Situation Report to clipboard"
+            >
+              {copiedSitRep ? (
+                <Check className="w-4 h-4 text-[#10b981] shrink-0" />
+              ) : (
+                <FileSpreadsheet className="w-4 h-4 text-[#4cd7f6] shrink-0" />
+              )}
+              {!isCollapsed && (
+                <span className="truncate font-bold text-[11px]">
+                  {copiedSitRep ? 'SITREP COPIED!' : 'EXPORT SITREP (1-CLICK)'}
+                </span>
+              )}
+            </button>
+
+            {/* ML Benchmark Modal Trigger */}
+            <button
+              onClick={onOpenPerformance}
+              className={`w-full flex items-center gap-2 p-2 rounded-lg text-xs font-mono bg-[#0b1326] hover:bg-[#131b2e] border border-[#222a3d] hover:border-[#4cd7f6]/40 text-[#869397] hover:text-[#4cd7f6] transition-all cursor-pointer ${
+                isCollapsed ? 'justify-center p-2' : ''
+              }`}
+              title="Open ML Models Benchmark & Evaluation Center"
+            >
+              <BarChart3 className="w-4 h-4 text-[#4cd7f6] shrink-0" />
+              {!isCollapsed && (
+                <span className="truncate text-[11px]">ML Benchmark Suite</span>
+              )}
+            </button>
+
+            {/* External APIs Modal Trigger */}
+            <button
+              onClick={onOpenIntegrations}
+              className={`w-full flex items-center gap-2 p-2 rounded-lg text-xs font-mono bg-[#0b1326] hover:bg-[#131b2e] border border-[#222a3d] hover:border-[#4cd7f6]/40 text-[#869397] hover:text-[#4cd7f6] transition-all cursor-pointer ${
+                isCollapsed ? 'justify-center p-2' : ''
+              }`}
+              title="Open 8 External API Integrations Hub"
+            >
+              <RadioReceiver className="w-4 h-4 text-[#4cd7f6] shrink-0" />
+              {!isCollapsed && (
+                <span className="truncate text-[11px]">8 External APIs Hub</span>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer / System Status & Collapse Toggle (When Collapsed) */}
+      <div className="p-2.5 border-t border-[#222a3d] bg-[#050b17]">
+        {isCollapsed ? (
+          <button
+            onClick={onToggleCollapse}
+            className="w-full flex items-center justify-center p-1.5 rounded-md text-[#869397] hover:text-white hover:bg-[#131b2e] border border-[#222a3d] transition-all cursor-pointer"
+            title="Expand sidebar"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        ) : (
+          <div className="space-y-1 text-xs font-mono">
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="text-[#869397]">Telemetry Stream</span>
+              <span className="text-[#10b981] font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] radar-dot" />
+                1Hz ACTIVE
+              </span>
+            </div>
+            <div className="text-[10px] text-[#5f6e73] truncate">
+              Scenario: <span className="text-[#dae2fd] font-bold">{scenario}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </aside>
+  );
+};

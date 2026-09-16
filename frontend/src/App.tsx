@@ -1,39 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import { Header } from './components/Header';
-import { DemoModeBanner } from './components/DemoModeBanner';
-import { RiskSummaryCard } from './components/RiskSummaryCard';
-import { LiveSensorCards } from './components/LiveSensorCards';
-import { ExplainableAI } from './components/ExplainableAI';
-import { FalseAlarmCard } from './components/FalseAlarmCard';
-import { ActiveAlerts } from './components/ActiveAlerts';
-import { SensorHealth } from './components/SensorHealth';
-import { ScenarioSimulator } from './components/ScenarioSimulator';
-import { MultiSensorChart } from './components/charts/MultiSensorChart';
-import { FloodRiskMap } from './components/map/FloodRiskMap';
-import { MenuBar } from './components/MenuBar';
+import { Sidebar, ActiveViewType } from './components/Sidebar';
 import { ModelPerformanceModal } from './components/ModelPerformanceModal';
 import { IntegrationsModal } from './components/integrations/IntegrationsModal';
 
-import { StreamFrame, ZoneState, HistoricalReading } from './types';
+import { OverviewView } from './components/views/OverviewView';
+import { GisMapView } from './components/views/GisMapView';
+import { HydrographView } from './components/views/HydrographView';
+import { XaiView } from './components/views/XaiView';
+import { SimulatorView } from './components/views/SimulatorView';
+import { SensorNodesView } from './components/views/SensorNodesView';
+import { AlertsView } from './components/views/AlertsView';
+
+import { StreamFrame, HistoricalReading } from './types';
 import { streamSocket } from './services/websocket';
 import { fetchSimulationFrame } from './services/api';
-import { Radio } from 'lucide-react';
+import {
+  Radio,
+  Menu,
+  X,
+  LayoutDashboard,
+  MapPin,
+  LineChart,
+  BrainCircuit,
+  SlidersHorizontal,
+  AlertTriangle,
+  ChevronRight,
+  ShieldCheck,
+} from 'lucide-react';
 
 export function App() {
   const [frame, setFrame] = useState<StreamFrame | null>(null);
   const [history, setHistory] = useState<HistoricalReading[]>([]);
+  const [activeView, setActiveView] = useState<ActiveViewType>('overview');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
   const [isPerformanceOpen, setIsPerformanceOpen] = useState<boolean>(false);
   const [isIntegrationsOpen, setIsIntegrationsOpen] = useState<boolean>(false);
   const [selectedZoneCode, setSelectedZoneCode] = useState<string>('ZONE-B');
 
-  // Unified frame ingest handler
+  // Unified frame ingest handler (Continuous 1Hz Telemetry Stream)
   const handleIncomingFrame = (newFrame: StreamFrame) => {
     if (!newFrame || !newFrame.primary_zone) return;
     setFrame(newFrame);
 
     // Append to historical rolling chart data
     const now = new Date();
-    const timeLabel = now.toLocaleTimeString('en-US', { hour12: false, minute: '2-digit', second: '2-digit' });
+    const timeLabel = now.toLocaleTimeString('en-US', {
+      hour12: false,
+      minute: '2-digit',
+      second: '2-digit',
+    });
 
     setHistory((prev) => {
       // Avoid inserting exact duplicate frames if WebSocket and poll fire in the same second
@@ -103,6 +120,39 @@ export function App() {
 
   const onlineSensors = frame.zones.filter((z) => z.status === 'ONLINE').length;
 
+  const viewTitles: Record<ActiveViewType, { title: string; subtitle: string }> = {
+    overview: {
+      title: 'COMMAND MATRIX & TELEMETRY HUD',
+      subtitle: 'Integrated Himalayan Catchment Surveillance & AI Risk Overview',
+    },
+    'gis-map': {
+      title: 'TACTICAL GIS CATCHMENT MAP',
+      subtitle: 'High-Resolution Satellite Orthomosaic & Inundation Polygons',
+    },
+    hydrograph: {
+      title: 'HYDROGRAPH & AI CREST FORECASTING',
+      subtitle: 'Dual-Axis River Stage, Cloudburst Intensity & +45m Projection',
+    },
+    xai: {
+      title: 'EXPLAINABLE AI & SHAP ATTRIBUTION',
+      subtitle: '8-Feature Hydrological Weights & False Alarm Suppression Filter',
+    },
+    simulator: {
+      title: 'SCENARIO & SHOCKWAVE SIMULATOR LAB',
+      subtitle: 'Interactive Hydraulic Testbed & Extreme Monsoonal Injection',
+    },
+    nodes: {
+      title: 'LoRaWAN SENSOR ARRAY & HARDWARE VITALS',
+      subtitle: 'ESP32 Nodes, Battery Voltages, Packet RSSI & Transducer Diagnostics',
+    },
+    alerts: {
+      title: 'ACTIVE INCIDENT ALERTS & EVACUATION SOP',
+      subtitle: 'Acoustic Siren Triggers, CAP Broadcast & UN/DEOC Situation Report',
+    },
+  };
+
+  const currentViewInfo = viewTitles[activeView] || viewTitles.overview;
+
   return (
     <div className="min-h-screen bg-[#0b1326] text-[#dae2fd] flex flex-col selection:bg-[#06b6d4] selection:text-[#003640]">
       {/* Top Header */}
@@ -115,105 +165,202 @@ export function App() {
         scenario={frame.scenario}
       />
 
-      {/* Standalone Tactical Menu Bar */}
-      <MenuBar
-        zones={frame.zones}
-        selectedZoneCode={selectedZoneCode}
-        onSelectZone={(code) => setSelectedZoneCode(code)}
-        onOpenPerformance={() => setIsPerformanceOpen(true)}
-        onOpenIntegrations={() => setIsIntegrationsOpen(true)}
-        activeAlertsCount={frame.alerts_count}
-      />
-
-      {/* Main Body */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-5 lg:p-6 space-y-5">
-        {/* Hackathon Judge Guided Stepper */}
-        <DemoModeBanner
-          currentScenario={frame.scenario}
-          onOpenPerformance={() => setIsPerformanceOpen(true)}
-          activeAlertsCount={frame.alerts_count}
-        />
-
-        {/* Active Alerts Emergency Banner */}
-        <ActiveAlerts
-          alerts={frame.active_alerts}
-          leadTimeMinutes={frame.lead_time_minutes}
-        />
-
-        {/* Overview: Top Risk & Explainability Section (Equal Height Grid) */}
-        <div id="overview-section" className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch scroll-mt-28">
-          <div className="lg:col-span-7 flex flex-col">
-            <RiskSummaryCard
-              overallRisk={frame.overall_risk}
-              primaryZone={activeZone}
-              leadTimeMinutes={frame.lead_time_minutes}
-              scenario={frame.scenario}
-            />
-          </div>
-          <div id="xai-section" className="lg:col-span-5 flex flex-col scroll-mt-28">
-            <ExplainableAI primaryZone={activeZone} />
-          </div>
+      {/* Main Workspace Layout with Vertical Sidebar */}
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Desktop Vertical Sidebar */}
+        <div className="hidden md:flex shrink-0">
+          <Sidebar
+            activeView={activeView}
+            onSelectView={(v) => setActiveView(v)}
+            zones={frame.zones}
+            selectedZoneCode={selectedZoneCode}
+            onSelectZone={(code) => setSelectedZoneCode(code)}
+            onOpenPerformance={() => setIsPerformanceOpen(true)}
+            onOpenIntegrations={() => setIsIntegrationsOpen(true)}
+            activeAlertsCount={frame.alerts_count}
+            onlineSensorsCount={onlineSensors}
+            totalSensorsCount={frame.zones.length}
+            scenario={frame.scenario}
+            isCollapsed={isSidebarCollapsed}
+            onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          />
         </div>
 
-        {/* Live Sensor Cards */}
-        <LiveSensorCards primaryZone={activeZone} />
+        {/* Mobile Floating Menu Toggle */}
+        <div className="md:hidden fixed bottom-4 right-4 z-50">
+          <button
+            onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+            className="p-3.5 rounded-full bg-[#06b6d4] text-[#000000] shadow-xl shadow-cyan-500/30 font-bold flex items-center justify-center cursor-pointer border border-[#4cd7f6]"
+            title="Toggle Navigation Menu"
+          >
+            {isMobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
 
-        {/* Multi-Sensor Charts & Scenario Controls */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          {/* Left Column (7 cols): Charts and Scenario Simulator */}
-          <div className="lg:col-span-7 space-y-5">
-            <div id="hydrograph-section" className="scroll-mt-28">
-              <MultiSensorChart data={history} />
-            </div>
-            <div id="simulator-section" className="scroll-mt-28">
-              <ScenarioSimulator
-                currentScenario={frame.scenario}
-                speed={frame.speed}
-                isRunning={frame.is_running}
-              />
-            </div>
-          </div>
-
-          {/* Right Column (5 cols): Interactive Map & False Alarm Reduction */}
-          <div className="lg:col-span-5 space-y-5">
-            <div id="gis-map-section" className="scroll-mt-28">
-              <FloodRiskMap
+        {/* Mobile Drawer Sidebar */}
+        {isMobileSidebarOpen && (
+          <div className="md:hidden fixed inset-0 z-40 bg-black/80 backdrop-blur-md flex">
+            <div className="w-72 h-full bg-[#070e1c] shadow-2xl flex flex-col">
+              <Sidebar
+                activeView={activeView}
+                onSelectView={(v) => {
+                  setActiveView(v);
+                  setIsMobileSidebarOpen(false);
+                }}
                 zones={frame.zones}
                 selectedZoneCode={selectedZoneCode}
-                onSelectZone={(code) => setSelectedZoneCode(code)}
+                onSelectZone={(code) => {
+                  setSelectedZoneCode(code);
+                  setIsMobileSidebarOpen(false);
+                }}
+                onOpenPerformance={() => {
+                  setIsPerformanceOpen(true);
+                  setIsMobileSidebarOpen(false);
+                }}
+                onOpenIntegrations={() => {
+                  setIsIntegrationsOpen(true);
+                  setIsMobileSidebarOpen(false);
+                }}
+                activeAlertsCount={frame.alerts_count}
+                onlineSensorsCount={onlineSensors}
+                totalSensorsCount={frame.zones.length}
                 scenario={frame.scenario}
+                isCollapsed={false}
+                onToggleCollapse={() => setIsMobileSidebarOpen(false)}
               />
             </div>
-            <FalseAlarmCard
+            <div
+              className="flex-1"
+              onClick={() => setIsMobileSidebarOpen(false)}
+            />
+          </div>
+        )}
+
+        {/* Dedicated Main Content Viewport */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4">
+          {/* Active View Title & Breadcrumb Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#222a3d]/80 font-mono">
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-[#869397]">SENSORA</span>
+              <ChevronRight className="w-3.5 h-3.5 text-[#5f6e73]" />
+              <span className="text-[#4cd7f6] font-bold uppercase tracking-wider">
+                {activeView.replace('-', ' ')}
+              </span>
+              <span className="text-[#869397] hidden lg:inline">•</span>
+              <span className="text-[#dae2fd] text-[11px] hidden lg:inline">
+                {currentViewInfo.subtitle}
+              </span>
+            </div>
+
+            {/* Quick Switcher View Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+              {[
+                { id: 'overview' as ActiveViewType, label: 'Overview', icon: LayoutDashboard },
+                { id: 'gis-map' as ActiveViewType, label: 'GIS Map', icon: MapPin },
+                { id: 'hydrograph' as ActiveViewType, label: 'Hydrograph', icon: LineChart },
+                { id: 'xai' as ActiveViewType, label: 'XAI', icon: BrainCircuit },
+                { id: 'simulator' as ActiveViewType, label: 'Simulator', icon: SlidersHorizontal },
+                { id: 'nodes' as ActiveViewType, label: 'Nodes', icon: Radio },
+                { id: 'alerts' as ActiveViewType, label: 'Alerts', icon: AlertTriangle },
+              ].map((pill) => {
+                const PillIcon = pill.icon;
+                const isSelected = activeView === pill.id;
+                return (
+                  <button
+                    key={pill.id}
+                    onClick={() => setActiveView(pill.id)}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all shrink-0 cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#06b6d4] text-[#000000] font-bold shadow-sm shadow-cyan-500/20'
+                        : 'bg-[#131b2e] hover:bg-[#1a233a] text-[#869397] hover:text-[#dae2fd] border border-[#222a3d]'
+                    }`}
+                  >
+                    <PillIcon className={`w-3 h-3 ${isSelected ? 'text-[#000000]' : 'text-[#869397]'}`} />
+                    <span>{pill.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Render Separate Dedicated View */}
+          {activeView === 'overview' && (
+            <OverviewView
+              frame={frame}
+              activeZone={activeZone}
+              history={history}
+              selectedZoneCode={selectedZoneCode}
+              onSelectZone={(code) => setSelectedZoneCode(code)}
+              onOpenPerformance={() => setIsPerformanceOpen(true)}
+            />
+          )}
+
+          {activeView === 'gis-map' && (
+            <GisMapView
+              zones={frame.zones}
+              selectedZoneCode={selectedZoneCode}
+              onSelectZone={(code) => setSelectedZoneCode(code)}
+              scenario={frame.scenario}
+            />
+          )}
+
+          {activeView === 'hydrograph' && (
+            <HydrographView
+              history={history}
+              activeZone={activeZone}
+            />
+          )}
+
+          {activeView === 'xai' && (
+            <XaiView
               primaryZone={activeZone}
               scenario={frame.scenario}
             />
-          </div>
-        </div>
+          )}
 
-        {/* Sensor Health Monitoring */}
-        <div id="nodes-section" className="scroll-mt-28">
-          <SensorHealth zones={frame.zones} />
-        </div>
-      </main>
+          {activeView === 'simulator' && (
+            <SimulatorView
+              frame={frame}
+              activeZone={activeZone}
+            />
+          )}
 
-      {/* Footer */}
-      <footer className="border-t border-[#222a3d] bg-[#060e20] py-5 px-4 mt-8 text-xs font-mono text-[#869397]">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-white font-['Space_Grotesk'] text-sm">SENSORA</span>
-            <span>// AI-Powered Flash Flood Detection & Early Warning System</span>
-          </div>
-          <div className="text-center md:text-right space-y-0.5">
-            <p className="text-[#dae2fd]">
-              Himalayan Catchment Surveillance • Melamchi-Indrawati Basin, Sindhupalchok, Nepal
-            </p>
-            <p className="text-[10px] text-[#869397]">
-              Defense-Grade Telemetry Architecture • Hardware-Ready for LoRaWAN & ESP32 Ingestion
-            </p>
-          </div>
-        </div>
-      </footer>
+          {activeView === 'nodes' && (
+            <SensorNodesView
+              zones={frame.zones}
+              selectedZoneCode={selectedZoneCode}
+              onSelectZone={(code) => setSelectedZoneCode(code)}
+            />
+          )}
+
+          {activeView === 'alerts' && (
+            <AlertsView
+              alerts={frame.active_alerts}
+              leadTimeMinutes={frame.lead_time_minutes}
+              zones={frame.zones}
+              selectedZoneCode={selectedZoneCode}
+            />
+          )}
+
+          {/* Footer */}
+          <footer className="border-t border-[#222a3d] bg-[#060e20] py-4 px-4 mt-6 text-xs font-mono text-[#869397] rounded-xl">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-white font-['Space_Grotesk'] text-sm">SENSORA</span>
+                <span>// Himalayan Flash Flood Early Warning System</span>
+              </div>
+              <div className="text-center md:text-right space-y-0.5">
+                <p className="text-[#dae2fd]">
+                  Sindhupalchok Catchment Surveillance • Melamchi-Indrawati Basin Corridor
+                </p>
+                <p className="text-[10px] text-[#869397]">
+                  Continuous Dual Telemetry (WebSocket + REST 1Hz) • Hardware-Ready LoRaWAN Ingestion
+                </p>
+              </div>
+            </div>
+          </footer>
+        </main>
+      </div>
 
       {/* Model Performance Evaluation Modal */}
       <ModelPerformanceModal
