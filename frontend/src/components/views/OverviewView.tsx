@@ -10,7 +10,7 @@ import { ScenarioSimulator } from '../ScenarioSimulator';
 import { FloodRiskMap } from '../map/FloodRiskMap';
 import { FalseAlarmCard } from '../FalseAlarmCard';
 import { SensorHealth } from '../SensorHealth';
-import { Radio, Mountain, MapPin, Eye, Camera } from 'lucide-react';
+import { Radio, Mountain, MapPin, Eye, Camera, ShieldCheck, CheckCircle2, AlertCircle, AlertTriangle } from 'lucide-react';
 
 interface OverviewViewProps {
   frame: StreamFrame;
@@ -29,6 +29,10 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
   onSelectZone,
   onOpenPerformance,
 }) => {
+  const isHighRisk = frame.overall_risk === 'HIGH';
+  const isMediumRisk = frame.overall_risk === 'MEDIUM';
+  const isSafeCondition = frame.overall_risk === 'LOW' && frame.alerts_count === 0;
+
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Real-time Catchment Visual Hero Strip */}
@@ -74,6 +78,74 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
                 Autonomous multi-station early warning matrix operating along 26km of steep hydraulic gradient (2,480m to 785m MSL) with AI flash flood prediction & false alarm suppression.
               </p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* INSTANT NEPAL SAFETY CONDITION DETECTION BANNER */}
+      <div
+        className={`p-4 sm:p-5 rounded-2xl glass-panel border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-2xl transition-all ${
+          isSafeCondition
+            ? 'border-emerald-500/60 bg-emerald-950/30 text-emerald-300'
+            : isMediumRisk
+            ? 'border-amber-500/60 bg-amber-950/30 text-amber-200'
+            : 'border-red-500/80 bg-red-950/50 text-red-100 animate-pulse'
+        }`}
+      >
+        <div className="flex items-center gap-4">
+          <div
+            className={`p-3 rounded-2xl border shrink-0 ${
+              isSafeCondition
+                ? 'bg-emerald-950/80 border-emerald-500 text-emerald-400'
+                : isMediumRisk
+                ? 'bg-amber-950/80 border-amber-500 text-amber-400'
+                : 'bg-red-950/90 border-red-500 text-red-400 animate-bounce'
+            }`}
+          >
+            {isSafeCondition ? (
+              <ShieldCheck className="w-7 h-7" />
+            ) : isMediumRisk ? (
+              <AlertCircle className="w-7 h-7" />
+            ) : (
+              <AlertTriangle className="w-7 h-7" />
+            )}
+          </div>
+
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-mono font-extrabold uppercase tracking-widest text-slate-300">
+                // REGIONAL SAFETY CONDITION DETECTED:
+              </span>
+              <span
+                className={`px-3 py-0.5 rounded-full font-mono text-xs font-black border ${
+                  isSafeCondition
+                    ? 'bg-emerald-950 text-emerald-300 border-emerald-500'
+                    : isMediumRisk
+                    ? 'bg-amber-950 text-amber-300 border-amber-500'
+                    : 'bg-red-950 text-red-200 border-red-500'
+                }`}
+              >
+                {isSafeCondition
+                  ? '🟢 CONDITION: SAFE (NOMINAL BASELINE)'
+                  : isMediumRisk
+                  ? '🟡 CONDITION: MODERATE SURGE WATCH'
+                  : '🔴 CONDITION: NOT SAFE (CRITICAL DANGER)'}
+              </span>
+            </div>
+            <h3 className="text-base sm:text-lg font-bold text-white font-['Outfit'] mt-0.5">
+              {isSafeCondition
+                ? 'Melamchi Catchment & Regional River Corridors are Operating under SAFE Conditions'
+                : isMediumRisk
+                ? 'Upstream Monsoonal Surge Detected — Elevated River Stage Watch Active'
+                : 'CRITICAL DANGER DETECTED: NOT SAFE — Mandatory Evacuation Order Active'}
+            </h3>
+            <p className="text-xs text-slate-300 font-sans mt-0.5">
+              {isSafeCondition
+                ? 'All 4 monitoring stations report river stage margins well below warning threshold. Pedestrian footbridges & Bailey bridge crossings are open & safe.'
+                : isMediumRisk
+                ? 'Sustained rain causing river stage rise (+0.18m/hr). Avoid low-lying riverbank sandbanks.'
+                : 'Violent hydraulic surge +0.45m/hr passing Zone B Pul Bazaar. Do NOT attempt river crossings.'}
+            </p>
           </div>
         </div>
       </div>

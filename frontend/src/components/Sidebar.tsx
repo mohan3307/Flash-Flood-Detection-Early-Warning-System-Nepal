@@ -24,6 +24,7 @@ import { ZoneState } from '../types';
 
 export type ActiveViewType =
   | 'overview'
+  | 'safety-status'
   | 'gis-map'
   | 'hydrograph'
   | 'water-content'
@@ -80,6 +81,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       shortLabel: 'Overview',
       description: 'Command Matrix & Executive Summary',
       icon: LayoutDashboard,
+    },
+    {
+      id: 'safety-status',
+      label: 'Nepal Safety Monitor',
+      shortLabel: 'Safety Status',
+      description: 'Instant SAFE / NOT SAFE Condition & Orders',
+      icon: ShieldCheck,
+      badge: activeAlertsCount > 0 ? 'NOT SAFE' : 'SAFE',
+      badgeColor: activeAlertsCount > 0 ? 'bg-red-950 text-red-300 border-red-500 animate-pulse' : 'bg-emerald-950 text-emerald-300 border-emerald-500',
     },
     {
       id: 'gis-map',

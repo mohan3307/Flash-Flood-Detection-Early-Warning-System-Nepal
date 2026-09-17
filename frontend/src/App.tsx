@@ -5,6 +5,7 @@ import { ModelPerformanceModal } from './components/ModelPerformanceModal';
 import { IntegrationsModal } from './components/integrations/IntegrationsModal';
 
 import { OverviewView } from './components/views/OverviewView';
+import { SafetyStatusView } from './components/views/SafetyStatusView';
 import { GisMapView } from './components/views/GisMapView';
 import { HydrographView } from './components/views/HydrographView';
 import { WaterContentView } from './components/views/WaterContentView';
@@ -126,6 +127,10 @@ export function App() {
     overview: {
       title: 'COMMAND MATRIX & TELEMETRY HUD',
       subtitle: 'Integrated Himalayan Catchment Surveillance & AI Risk Overview',
+    },
+    'safety-status': {
+      title: 'NEPAL CATCHMENT SAFETY CONDITION MONITOR',
+      subtitle: 'Instant SAFE / NOT SAFE Status, Regional Basin Matrix & Evacuation Clearance',
     },
     'gis-map': {
       title: 'TACTICAL GIS CATCHMENT MAP',
@@ -277,6 +282,7 @@ export function App() {
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
               {[
                 { id: 'overview' as ActiveViewType, label: 'Overview', icon: LayoutDashboard },
+                { id: 'safety-status' as ActiveViewType, label: 'Safety Monitor', icon: ShieldCheck },
                 { id: 'gis-map' as ActiveViewType, label: 'GIS Map', icon: MapPin },
                 { id: 'hydrograph' as ActiveViewType, label: 'Hydrograph', icon: LineChart },
                 { id: 'water-content' as ActiveViewType, label: 'Water Content', icon: Droplets },
@@ -314,6 +320,15 @@ export function App() {
               selectedZoneCode={selectedZoneCode}
               onSelectZone={(code) => setSelectedZoneCode(code)}
               onOpenPerformance={() => setIsPerformanceOpen(true)}
+            />
+          )}
+
+          {activeView === 'safety-status' && (
+            <SafetyStatusView
+              frame={frame}
+              activeZone={activeZone}
+              onSelectZone={(code) => setSelectedZoneCode(code)}
+              onOpenIntegrations={() => setIsIntegrationsOpen(true)}
             />
           )}
 
